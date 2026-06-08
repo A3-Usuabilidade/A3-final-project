@@ -31,3 +31,52 @@ export function validarDataNascimento(valor) {
   }
   return { valido: true, valor };
 }
+export const esquemaEditarPerfil = z.object({
+  nome: z
+    .string()
+    .min(2, 'Nome deve ter no mínimo 2 caracteres')
+    .max(50, 'Nome deve ter no máximo 50 caracteres')
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
+
+  dataNascimento: z
+    .string()
+    .min(1, 'Data de nascimento é obrigatória')
+    .refine((val) => {
+      const resultado = validarDataNascimento(val);
+      return resultado.valido;
+    }, 'Formato deve ser DD/MM/AAAA')
+    .refine((val) => {
+      const [dia, mes, ano] = val.split('/').map(Number);
+      const data = new Date(ano, mes - 1, dia);
+      const minima = new Date();
+      minima.setFullYear(minima.getFullYear() - 13);
+      return data <= minima;
+    }, 'Você deve ter no mínimo 13 anos'),
+});
+export const esquemaAlterarSenha = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(1, 'Senha atual é obrigatória'),
+
+    newPassword: z
+      .string()
+      .min(8, 'Nova senha deve ter no mínimo 8 caracteres')
+      .max(32, 'Nova senha deve ter no máximo 32 caracteres')
+      .regex(/[A-Z]/, 'Nova senha deve ter pelo menos 1 letra maiúscula')
+      .regex(/[a-z]/, 'Nova senha deve ter pelo menos 1 letra minúscula')
+      .regex(/\d/,    'Nova senha deve ter pelo menos 1 número')
+      .regex(/[@$!%*?&.]/, 'Nova senha deve ter pelo menos 1 caractere especial (@$!%*?&.)'),
+
+    confirmPassword: z
+      .string()
+      .min(1, 'Confirmação de senha é obrigatória'),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  })
+  .refine((d) => d.newPassword !== d.currentPassword, {
+    message: 'A nova senha não pode ser igual à senha atual',
+    path: ['newPassword'],
+  });

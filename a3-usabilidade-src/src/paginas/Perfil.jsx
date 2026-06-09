@@ -33,7 +33,9 @@ export default function Perfil() {
   useEffect(() => {
     if (dados) {
       setValue('nome', dados.nome || '');
-      setValue('dataNascimento', dados.dataNascimento?.split('T')[0] || '');
+      if (dados.dataNascimento) {
+        setValue('dataNascimento', dados.dataNascimento.split('T')[0]);
+      }
     }
   }, [dados, setValue]);
 
@@ -45,6 +47,8 @@ export default function Perfil() {
       if (body.dataNascimento) {
         const [a, m, d] = body.dataNascimento.split('-');
         body.dataNascimento = `${d}/${m}/${a}`;
+      } else {
+        delete body.dataNascimento;
       }
       await atualizar(body);
       setSucessoForm('Perfil atualizado com sucesso!');

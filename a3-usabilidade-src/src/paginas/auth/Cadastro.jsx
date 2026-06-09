@@ -78,6 +78,7 @@ export default function Cadastro() {
           placeholder="DD/MM/AAAA"
           className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
         />
+        <p className="text-xs text-on-surface-variant mt-1">Formato DD/MM/AAAA</p>
       </div>
 
       <div>
@@ -90,6 +91,7 @@ export default function Cadastro() {
           className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
           placeholder="Mínimo 8 caracteres"
         />
+        <p className="text-xs text-on-surface-variant mt-1">8-32 caracteres, pelo menos 1 maiúscula, 1 minúscula, 1 número e 1 caractere especial</p>
       </div>
 
       <div>

@@ -1,24 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useProfile from '../hooks/useProfile.js';
 import { esquemaEditarPerfil, esquemaAlterarSenha } from '../configuracao/validacao.js';
-import api from '../servicos/api';
 
 export default function Perfil() {
-  const {
-    dadosUsuario,
-    carregando,
-    erroPerfil,
-    erroSenha,
-    sucessoPerfil,
-    sucessoSenha,
-    setErroPerfil,
-    setErroSenha,
-    setSucessoPerfil,
-    setSucessoSenha,
-    carregarPerfil
-  } = useProfile();
+  const { dados, carregando, erro, atualizar, alterarSenha } = useProfile();
+  const [erroForm, setErroForm] = useState(null);
+  const [sucessoForm, setSucessoForm] = useState(null);
+  const [erroSenhaForm, setErroSenhaForm] = useState(null);
+  const [sucessoSenhaForm, setSucessoSenhaForm] = useState(null);
 
   const {
     register: registerPerfil,
@@ -32,63 +23,44 @@ export default function Perfil() {
   const {
     register: registerSenha,
     handleSubmit: handleSubmitSenha,
-    reset: resetFormSenha,
+    reset: resetSenha,
     formState: { errors: errorsSenha, isSubmitting: isSubmittingSenha },
   } = useForm({
     resolver: zodResolver(esquemaAlterarSenha),
   });
 
   useEffect(() => {
-    if (dadosUsuario) {
-      setValue('nome', dadosUsuario.nome);
-      setValue('dataNascimento', dadosUsuario.dataNascimento);
+    if (dados) {
+      setValue('nome', dados.nome || '');
+      setValue('dataNascimento', dados.dataNascimento?.split('T')[0] || '');
     }
-  }, [dadosUsuario, setValue]);
+  }, [dados, setValue]);
 
-  const atualizarPerfil = async (dadosAtualizados) => {
-    setErroPerfil(null);
-    setSucessoPerfil(false);
+  const onEditar = async (formData) => {
+    setErroForm(null);
+    setSucessoForm(null);
     try {
-      await api.put(`/usuarios/${dadosUsuario?.id}`, dadosAtualizados);
-      setSucessoPerfil(true);
-      await carregarPerfil();
-    } catch (erro) {
-      const mensagem = erro.response?.data?.message || 'Erro ao atualizar o perfil.';
-      setErroPerfil(mensagem);
-      throw erro;
-    }
-  };
-
-  const alterarSenha = async (dadosSenha) => {
-    setErroSenha(null);
-    setSucessoSenha(false);
-    try {
-      await api.put('/auth/change-password', {
-        currentPassword: dadosSenha.currentPassword,
-        newPassword: dadosSenha.newPassword
-      });
-      setSucessoSenha(true);
-    } catch (erro) {
-      const mensagem = erro.response?.data?.message || 'Erro ao alterar a senha.';
-      setErroSenha(mensagem);
-      throw erro;
+      const body = { ...formData };
+      if (body.dataNascimento) {
+        const [a, m, d] = body.dataNascimento.split('-');
+        body.dataNascimento = `${d}/${m}/${a}`;
+      }
+      await atualizar(body);
+      setSucessoForm('Perfil atualizado com sucesso!');
+    } catch (err) {
+      setErroForm(err.response?.data?.message || 'Erro ao atualizar o perfil');
     }
   };
 
-  const onEditarPerfilSubmit = async (dados) => {
+  const onAlterar = async (dadosSenha) => {
+    setErroSenhaForm(null);
+    setSucessoSenhaForm(null);
     try {
-      await atualizarPerfil(dados);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const onAlterarSenhaSubmit = async (dados) => {
-    try {
-      await alterarSenha(dados);
-      resetFormSenha();
-    } catch (e) {
-      console.error(e);
+      await alterarSenha(dadosSenha);
+      setSucessoSenhaForm('Senha alterada com sucesso!');
+      resetSenha();
+    } catch (err) {
+      setErroSenhaForm(err.response?.data?.message || 'Erro ao alterar a senha');
     }
   };
 
@@ -96,23 +68,26 @@ export default function Perfil() {
     return <p className="text-white p-8 text-center">Carregando dados do perfil...</p>;
   }
 
+  if (erro) {
+    return <p className="text-red-400 p-8 text-center">{erro}</p>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 text-white space-y-8">
       <h1 className="text-3xl font-bold border-b border-gray-700 pb-4">Meu Perfil</h1>
 
-      {/* Seção Dados Pessoais */}
       <section className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
         <h2 className="text-xl font-semibold text-blue-400">Dados Pessoais</h2>
-        
-        {sucessoPerfil && <p className="text-green-400 font-medium">Perfil updated com sucesso!</p>}
-        {erroPerfil && <p className="text-red-400 font-medium">{erroPerfil}</p>}
 
-        <form onSubmit={handleSubmitPerfil(onEditarPerfilSubmit)} className="space-y-4">
+        {sucessoForm && <p className="text-green-400 font-medium">{sucessoForm}</p>}
+        {erroForm && <p className="text-red-400 font-medium">{erroForm}</p>}
+
+        <form onSubmit={handleSubmitPerfil(onEditar)} className="space-y-4">
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-400 mb-1">E-mail (Não editável)</label>
+            <label className="text-sm font-medium text-gray-400 mb-1">E-mail (não editável)</label>
             <input
               type="email"
-              value={dadosUsuario?.email || ''}
+              value={dados?.email || ''}
               disabled
               className="bg-gray-700 text-gray-400 p-2 rounded cursor-not-allowed opacity-60 border border-gray-600"
             />
@@ -141,23 +116,22 @@ export default function Perfil() {
           <button
             type="submit"
             disabled={isSubmittingPerfil}
-            className="bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded font-medium disabled:opacity-50"
+            className="bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded font-medium disabled:opacity-50 cursor-pointer"
           >
             {isSubmittingPerfil ? 'Salvando...' : 'Salvar Alterações'}
           </button>
         </form>
       </section>
 
-      {/* Seção Alterar Senha */}
       <section className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
         <h2 className="text-xl font-semibold text-blue-400">Alterar Senha</h2>
 
-        {sucessoSenha && <p className="text-green-400 font-medium">Senha alterada com sucesso!</p>}
-        {erroSenha && <p className="text-red-400 font-medium">{erroSenha}</p>}
+        {sucessoSenhaForm && <p className="text-green-400 font-medium">{sucessoSenhaForm}</p>}
+        {erroSenhaForm && <p className="text-red-400 font-medium">{erroSenhaForm}</p>}
 
-        <form onSubmit={handleSubmitSenha(onAlterarSenhaSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmitSenha(onAlterar)} className="space-y-4">
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-200 mb-1">Senha Actual</label>
+            <label className="text-sm font-medium text-gray-200 mb-1">Senha Atual</label>
             <input
               type="password"
               {...registerSenha('currentPassword')}
@@ -189,7 +163,7 @@ export default function Perfil() {
           <button
             type="submit"
             disabled={isSubmittingSenha}
-            className="bg-red-600 hover:bg-red-700 transition-colors px-4 py-2 rounded font-medium disabled:opacity-50"
+            className="bg-red-600 hover:bg-red-700 transition-colors px-4 py-2 rounded font-medium disabled:opacity-50 cursor-pointer"
           >
             {isSubmittingSenha ? 'Alterando...' : 'Alterar Senha'}
           </button>

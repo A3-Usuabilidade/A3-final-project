@@ -22,7 +22,7 @@ export const esquemaSenha = z.string()
 
 export const esquemaLogin = z.object({
   email: esquemaEmail,
-  senha: z.string().min(1, 'A senha é obrigatória'),
+  senha: z.string().trim().min(1, 'A senha é obrigatória'),
 });
 
 // ===========================================
@@ -78,9 +78,9 @@ export const esquemaEditarPerfil = z.object({
 
   dataNascimento: z
     .string()
-    .min(1, 'Data de nascimento é obrigatória')
     .date('Formato deve ser YYYY-MM-DD')
-    .refine(idadeMinima13Anos, 'Você deve ter no mínimo 13 anos'),
+    .refine(idadeMinima13Anos, 'Você deve ter no mínimo 13 anos')
+    .or(z.literal('')),
 });
 
 // ===========================================

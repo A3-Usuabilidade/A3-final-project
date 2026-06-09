@@ -91,7 +91,13 @@ export default function Cadastro() {
           className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
           placeholder="Mínimo 8 caracteres"
         />
-        <p className="text-xs text-on-surface-variant mt-1">8-32 caracteres, pelo menos 1 maiúscula, 1 minúscula, 1 número e 1 caractere especial</p>
+        <ul className="text-xs text-on-surface-variant mt-1 space-y-0.5 list-disc list-inside">
+          <li>8 a 32 caracteres</li>
+          <li>Pelo menos 1 letra maiúscula</li>
+          <li>Pelo menos 1 letra minúscula</li>
+          <li>Pelo menos 1 número</li>
+          <li>Pelo menos 1 caractere especial (@$!%*?&.)</li>
+        </ul>
       </div>
 
       <div>

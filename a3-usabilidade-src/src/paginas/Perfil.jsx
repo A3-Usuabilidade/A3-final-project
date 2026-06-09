@@ -15,6 +15,7 @@ export default function Perfil() {
   const [erroSenhaForm, setErroSenhaForm] = useState(null);
   const [sucessoSenhaForm, setSucessoSenhaForm] = useState(null);
   const [editarAtivo, setEditarAtivo] = useState(false);
+  const [senhaAtiva, setSenhaAtiva] = useState(false);
 
   const {
     register: registerPerfil,
@@ -68,6 +69,7 @@ export default function Perfil() {
     try {
       await alterarSenha(dadosSenha);
       setSucessoSenhaForm('Senha alterada com sucesso!');
+      setSenhaAtiva(false);
       resetSenha();
     } catch (err) {
       setErroSenhaForm(err.response?.data?.message || 'Erro ao alterar a senha');
@@ -87,6 +89,13 @@ export default function Perfil() {
       setValue('nome', dados.nome || '');
       setValue('dataNascimento', dados.dataNascimento?.split('T')[0] || '');
     }
+  };
+
+  const cancelarSenha = () => {
+    setSenhaAtiva(false);
+    setErroSenhaForm(null);
+    setSucessoSenhaForm(null);
+    resetSenha();
   };
 
   if (carregando) {
@@ -241,7 +250,18 @@ export default function Perfil() {
         </section>
 
         <section className="bg-surface-container border border-outline-variant rounded-2xl p-8 space-y-5">
-          <h2 className="text-xl font-semibold text-on-surface">Alterar Senha</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-on-surface">Alterar Senha</h2>
+            {!senhaAtiva && (
+              <button
+                type="button"
+                onClick={() => setSenhaAtiva(true)}
+                className="bg-surface-container-high text-on-surface border border-outline-variant rounded-lg px-5 py-2 text-sm font-medium cursor-pointer hover:brightness-90 transition"
+              >
+                Alterar Senha
+              </button>
+            )}
+          </div>
 
           {sucessoSenhaForm && (
             <p className="text-on-surface text-sm bg-surface-container-high border border-outline-variant rounded-lg p-2">
@@ -255,64 +275,75 @@ export default function Perfil() {
             </p>
           )}
 
-          <form onSubmit={handleSubmitSenha(onAlterar)} className="space-y-4">
+          {senhaAtiva && (
+            <form onSubmit={handleSubmitSenha(onAlterar)} className="space-y-4">
 
-            <div>
-              <label className="block text-sm text-on-surface-variant mb-1">
-                Senha Atual
-              </label>
-              <input
-                type="password"
-                {...registerSenha('currentPassword')}
-                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
-              />
-              {errorsSenha.currentPassword && (
-                <span className="text-error text-xs mt-1 block">
-                  {errorsSenha.currentPassword.message}
-                </span>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm text-on-surface-variant mb-1">
+                  Senha Atual
+                </label>
+                <input
+                  type="password"
+                  {...registerSenha('currentPassword')}
+                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                />
+                {errorsSenha.currentPassword && (
+                  <span className="text-error text-xs mt-1 block">
+                    {errorsSenha.currentPassword.message}
+                  </span>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm text-on-surface-variant mb-1">
-                Nova Senha
-              </label>
-              <input
-                type="password"
-                {...registerSenha('newPassword')}
-                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
-              />
-              {errorsSenha.newPassword && (
-                <span className="text-error text-xs mt-1 block">
-                  {errorsSenha.newPassword.message}
-                </span>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm text-on-surface-variant mb-1">
+                  Nova Senha
+                </label>
+                <input
+                  type="password"
+                  {...registerSenha('newPassword')}
+                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                />
+                {errorsSenha.newPassword && (
+                  <span className="text-error text-xs mt-1 block">
+                    {errorsSenha.newPassword.message}
+                  </span>
+                )}
+              </div>
 
-            <div>
-              <label className="block text-sm text-on-surface-variant mb-1">
-                Confirmar Nova Senha
-              </label>
-              <input
-                type="password"
-                {...registerSenha('confirmPassword')}
-                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
-              />
-              {errorsSenha.confirmPassword && (
-                <span className="text-error text-xs mt-1 block">
-                  {errorsSenha.confirmPassword.message}
-                </span>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm text-on-surface-variant mb-1">
+                  Confirmar Nova Senha
+                </label>
+                <input
+                  type="password"
+                  {...registerSenha('confirmPassword')}
+                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                />
+                {errorsSenha.confirmPassword && (
+                  <span className="text-error text-xs mt-1 block">
+                    {errorsSenha.confirmPassword.message}
+                  </span>
+                )}
+              </div>
 
-            <button
-              type="submit"
-              disabled={isSubmittingSenha}
-              className="w-full bg-surface-container-high text-on-surface border border-outline-variant rounded-lg py-2 font-semibold cursor-pointer hover:brightness-90 disabled:opacity-50 transition"
-            >
-              {isSubmittingSenha ? 'Alterando...' : 'Alterar Senha'}
-            </button>
-          </form>
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmittingSenha}
+                  className="flex-1 bg-surface-container-high text-on-surface border border-outline-variant rounded-lg py-2 font-semibold cursor-pointer hover:brightness-90 disabled:opacity-50 transition"
+                >
+                  {isSubmittingSenha ? 'Alterando...' : 'Alterar Senha'}
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelarSenha}
+                  className="flex-1 bg-surface-container-high text-on-surface border border-outline-variant rounded-lg py-2 font-medium cursor-pointer hover:brightness-90 transition"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          )}
         </section>
       </div>
     </div>

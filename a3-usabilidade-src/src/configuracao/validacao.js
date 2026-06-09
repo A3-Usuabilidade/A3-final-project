@@ -7,7 +7,14 @@ import { z } from 'zod';
 const regexNome = /^[a-zA-ZÀ-ÿ\s]+$/;
 
 export const esquemaEmail = z.email('E-mail inválido');
-export const esquemaSenha = z.string().min(6, 'A senha deve ter no mínimo 6 caracteres');
+
+export const esquemaSenha = z.string()
+  .min(8, 'A senha deve ter no mínimo 8 caracteres')
+  .max(32, 'A senha deve ter no máximo 32 caracteres')
+  .regex(/[A-Z]/, 'Pelo menos 1 letra maiúscula')
+  .regex(/[a-z]/, 'Pelo menos 1 letra minúscula')
+  .regex(/\d/,    'Pelo menos 1 número')
+  .regex(/[@$!%*?&.]/, 'Pelo menos 1 caractere especial (@$!%*?&.)');
 
 // ===========================================
 // Login
@@ -15,28 +22,36 @@ export const esquemaSenha = z.string().min(6, 'A senha deve ter no mínimo 6 car
 
 export const esquemaLogin = z.object({
   email: esquemaEmail,
-  senha: esquemaSenha,
+  senha: z.string().min(1, 'A senha é obrigatória'),
 });
 
 // ===========================================
 // Cadastro
 // ===========================================
 
-export function validarDataNascimento(valor) {
-  if (!valor) return { valido: true, valor };
-  const regex = /^\d{2}\/\d{2}\/\d{4}$/;
-  if (!regex.test(valor)) return { valido: false, mensagem: 'Formato deve ser DD/MM/AAAA' };
-  const [dia, mes, ano] = valor.split('/').map(Number);
-  const data = new Date(ano, mes - 1, dia);
-  if (data.getDate() !== dia || data.getMonth() !== mes - 1 || data.getFullYear() !== ano) {
-    return { valido: false, mensagem: 'Data inválida' };
-  }
-  return { valido: true, valor };
+const regexDataDDMMAAAA = /^\d{2}\/\d{2}\/\d{4}$/;
+
+function dataValidaDDMMAAAA(val) {
+  const [d, m, a] = val.split('/').map(Number);
+  const data = new Date(a, m - 1, d);
+  return data.getDate() === d && data.getMonth() === m - 1 && data.getFullYear() === a;
+}
+
+function idadeMinima13AnosDDMMAAAA(val) {
+  const [d, m, a] = val.split('/').map(Number);
+  const minima = new Date();
+  minima.setFullYear(minima.getFullYear() - 13);
+  return new Date(a, m - 1, d) <= minima;
 }
 
 export const esquemaCadastro = z.object({
   nome: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
   email: esquemaEmail,
+  dataNascimento: z
+    .string()
+    .regex(regexDataDDMMAAAA, 'Formato deve ser DD/MM/AAAA')
+    .refine(dataValidaDDMMAAAA, 'Data inválida')
+    .refine(idadeMinima13AnosDDMMAAAA, 'Você deve ter no mínimo 13 anos'),
   senha: esquemaSenha,
   confirmarSenha: z.string(),
 }).refine((dados) => dados.senha === dados.confirmarSenha, {
@@ -86,14 +101,7 @@ export const esquemaAlterarSenha = z
       .string()
       .min(1, 'Senha atual é obrigatória'),
 
-    newPassword: z
-      .string()
-      .min(8, 'Nova senha deve ter no mínimo 8 caracteres')
-      .max(32, 'Nova senha deve ter no máximo 32 caracteres')
-      .regex(/[A-Z]/, 'Nova senha deve ter pelo menos 1 letra maiúscula')
-      .regex(/[a-z]/, 'Nova senha deve ter pelo menos 1 letra minúscula')
-      .regex(/\d/,    'Nova senha deve ter pelo menos 1 número')
-      .regex(/[@$!%*?&.]/, 'Nova senha deve ter pelo menos 1 caractere especial (@$!%*?&.)'),
+    newPassword: esquemaSenha,
 
     confirmPassword: z
       .string()

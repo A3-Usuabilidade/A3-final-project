@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../servicos/api.js';
-import { esquemaCadastro, validarDataNascimento } from '../../configuracao/validacao.js';
+import { esquemaCadastro } from '../../configuracao/validacao.js';
 
 export default function Cadastro() {
   const [nome, setNome] = useState('');
@@ -16,21 +16,15 @@ export default function Cadastro() {
     e.preventDefault();
     setErroForm(null);
 
-    const resultado = esquemaCadastro.safeParse({ nome, email, senha, confirmarSenha });
+    const resultado = esquemaCadastro.safeParse({ nome, email, dataNascimento, senha, confirmarSenha });
     if (!resultado.success) {
       setErroForm(resultado.error.issues[0].message);
       return;
     }
 
-    const dataValida = validarDataNascimento(dataNascimento);
-    if (!dataValida.valido) {
-      setErroForm(dataValida.mensagem);
-      return;
-    }
-
     try {
       const body = { nome, email, senha };
-      if (dataValida.valor) body.dataNascimento = dataValida.valor;
+      if (dataNascimento) body.dataNascimento = dataNascimento;
       await api.post('/auth/register', body);
       navigate('/entrar');
     } catch (erroCapturado) {
@@ -94,7 +88,7 @@ export default function Cadastro() {
           onChange={(e) => setSenha(e.target.value)}
           required
           className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="Mínimo 8 caracteres"
         />
       </div>
 

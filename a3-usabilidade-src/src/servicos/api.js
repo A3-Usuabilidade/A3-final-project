@@ -18,9 +18,12 @@ api.interceptors.response.use(
   (resposta) => resposta,
   (erro) => {
     if (erro.response?.status === 401) {
-      localStorage.removeItem('token');
-      sessionStorage.removeItem('token');
-      window.location.href = '/entrar';
+      const foiLogin = erro.config?.url?.includes('/auth/login');
+      if (!foiLogin) {
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        window.location.href = '/entrar';
+      }
     }
     return Promise.reject(erro);
   }

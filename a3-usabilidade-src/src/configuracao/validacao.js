@@ -64,7 +64,7 @@ export const esquemaEditarPerfil = z.object({
   dataNascimento: z
     .string()
     .min(1, 'Data de nascimento é obrigatória')
-    .iso.date('Formato deve ser YYYY-MM-DD')
+    .date('Formato deve ser YYYY-MM-DD')
     .refine(idadeMinima13Anos, 'Você deve ter no mínimo 13 anos'),
 });
 

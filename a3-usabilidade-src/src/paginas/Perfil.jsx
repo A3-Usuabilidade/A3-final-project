@@ -10,6 +10,7 @@ export default function Perfil() {
   const [sucessoForm, setSucessoForm] = useState(null);
   const [erroSenhaForm, setErroSenhaForm] = useState(null);
   const [sucessoSenhaForm, setSucessoSenhaForm] = useState(null);
+  const [editarAtivo, setEditarAtivo] = useState(false);
 
   const {
     register: registerPerfil,
@@ -47,6 +48,7 @@ export default function Perfil() {
       }
       await atualizar(body);
       setSucessoForm('Perfil atualizado com sucesso!');
+      setEditarAtivo(false);
     } catch (err) {
       setErroForm(err.response?.data?.message || 'Erro ao atualizar o perfil');
     }
@@ -64,111 +66,234 @@ export default function Perfil() {
     }
   };
 
+  const cancelarEdicao = () => {
+    setEditarAtivo(false);
+    setErroForm(null);
+    setSucessoForm(null);
+    if (dados) {
+      setValue('nome', dados.nome || '');
+      setValue('dataNascimento', dados.dataNascimento?.split('T')[0] || '');
+    }
+  };
+
   if (carregando) {
-    return <p className="text-white p-8 text-center">Carregando dados do perfil...</p>;
+    return (
+      <div className="bg-surface min-h-screen p-6">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-on-surface-variant text-center py-12">
+            Carregando dados do perfil...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (erro) {
-    return <p className="text-red-400 p-8 text-center">{erro}</p>;
+    return (
+      <div className="bg-surface min-h-screen p-6">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-error text-sm text-center bg-error-container/20 border border-error-container rounded-lg p-3">
+            {erro}
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 text-white space-y-8">
-      <h1 className="text-3xl font-bold border-b border-gray-700 pb-4">Meu Perfil</h1>
+    <div className="bg-surface min-h-screen p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
 
-      <section className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
-        <h2 className="text-xl font-semibold text-blue-400">Dados Pessoais</h2>
+        <h1 className="text-2xl font-semibold text-on-surface">Meu Perfil</h1>
 
-        {sucessoForm && <p className="text-green-400 font-medium">{sucessoForm}</p>}
-        {erroForm && <p className="text-red-400 font-medium">{erroForm}</p>}
+        <section className="bg-surface-container border border-outline-variant rounded-2xl p-8 space-y-5">
 
-        <form onSubmit={handleSubmitPerfil(onEditar)} className="space-y-4">
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-400 mb-1">E-mail (não editável)</label>
-            <input
-              type="email"
-              value={dados?.email || ''}
-              disabled
-              className="bg-gray-700 text-gray-400 p-2 rounded cursor-not-allowed opacity-60 border border-gray-600"
-            />
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-on-surface">Dados Pessoais</h2>
+            {!editarAtivo && (
+              <button
+                type="button"
+                onClick={() => setEditarAtivo(true)}
+                className="bg-primary text-on-primary font-semibold rounded-lg px-5 py-2 text-sm transition cursor-pointer hover:brightness-90"
+              >
+                Editar
+              </button>
+            )}
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-200 mb-1">Nome</label>
-            <input
-              type="text"
-              {...registerPerfil('nome')}
-              className="bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-            />
-            {errorsPerfil.nome && <span className="text-red-400 text-xs mt-1">{errorsPerfil.nome.message}</span>}
-          </div>
+          {sucessoForm && (
+            <p className="text-on-surface text-sm bg-surface-container-high border border-outline-variant rounded-lg p-2">
+              {sucessoForm}
+            </p>
+          )}
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-200 mb-1">Data de Nascimento</label>
-            <input
-              type="date"
-              {...registerPerfil('dataNascimento')}
-              className="bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-            />
-            {errorsPerfil.dataNascimento && <span className="text-red-400 text-xs mt-1">{errorsPerfil.dataNascimento.message}</span>}
-          </div>
+          {erroForm && (
+            <p className="text-error text-sm text-center bg-error-container/20 border border-error-container rounded-lg p-2">
+              {erroForm}
+            </p>
+          )}
 
-          <button
-            type="submit"
-            disabled={isSubmittingPerfil}
-            className="bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded font-medium disabled:opacity-50 cursor-pointer"
-          >
-            {isSubmittingPerfil ? 'Salvando...' : 'Salvar Alterações'}
-          </button>
-        </form>
-      </section>
+          <form onSubmit={handleSubmitPerfil(onEditar)} className="space-y-4">
 
-      <section className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
-        <h2 className="text-xl font-semibold text-blue-400">Alterar Senha</h2>
+            <div>
+              <label className="block text-sm text-on-surface-variant mb-1">
+                E-mail
+              </label>
+              <input
+                type="email"
+                value={dados?.email || ''}
+                disabled
+                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface-variant cursor-not-allowed"
+              />
+              <p className="text-xs text-on-surface-variant mt-1">
+                O e-mail não pode ser alterado
+              </p>
+            </div>
 
-        {sucessoSenhaForm && <p className="text-green-400 font-medium">{sucessoSenhaForm}</p>}
-        {erroSenhaForm && <p className="text-red-400 font-medium">{erroSenhaForm}</p>}
+            <div>
+              <label className="block text-sm text-on-surface-variant mb-1">
+                Nome
+              </label>
+              {editarAtivo ? (
+                <>
+                  <input
+                    type="text"
+                    {...registerPerfil('nome')}
+                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                  />
+                  {errorsPerfil.nome && (
+                    <span className="text-error text-xs mt-1 block">
+                      {errorsPerfil.nome.message}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <p className="text-on-surface">{dados?.nome}</p>
+              )}
+            </div>
 
-        <form onSubmit={handleSubmitSenha(onAlterar)} className="space-y-4">
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-200 mb-1">Senha Atual</label>
-            <input
-              type="password"
-              {...registerSenha('currentPassword')}
-              className="bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-            />
-            {errorsSenha.currentPassword && <span className="text-red-400 text-xs mt-1">{errorsSenha.currentPassword.message}</span>}
-          </div>
+            <div>
+              <label className="block text-sm text-on-surface-variant mb-1">
+                Data de Nascimento
+              </label>
+              {editarAtivo ? (
+                <>
+                  <input
+                    type="date"
+                    {...registerPerfil('dataNascimento')}
+                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                  />
+                  {errorsPerfil.dataNascimento && (
+                    <span className="text-error text-xs mt-1 block">
+                      {errorsPerfil.dataNascimento.message}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <p className="text-on-surface">
+                  {dados?.dataNascimento
+                    ? new Date(dados.dataNascimento).toLocaleDateString('pt-BR')
+                    : '\u2014'}
+                </p>
+              )}
+            </div>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-200 mb-1">Nova Senha</label>
-            <input
-              type="password"
-              {...registerSenha('newPassword')}
-              className="bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-            />
-            {errorsSenha.newPassword && <span className="text-red-400 text-xs mt-1">{errorsSenha.newPassword.message}</span>}
-          </div>
+            {editarAtivo && (
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmittingPerfil}
+                  className="flex-1 bg-primary text-on-primary font-semibold rounded-lg py-2 transition cursor-pointer hover:brightness-90 disabled:opacity-50"
+                >
+                  {isSubmittingPerfil ? 'Salvando...' : 'Salvar Alterações'}
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelarEdicao}
+                  className="flex-1 bg-surface-container-high text-on-surface border border-outline-variant rounded-lg py-2 font-medium cursor-pointer hover:brightness-90 transition"
+                >
+                  Cancelar
+                </button>
+              </div>
+            )}
+          </form>
+        </section>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-200 mb-1">Confirmar Nova Senha</label>
-            <input
-              type="password"
-              {...registerSenha('confirmPassword')}
-              className="bg-gray-700 text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
-            />
-            {errorsSenha.confirmPassword && <span className="text-red-400 text-xs mt-1">{errorsSenha.confirmPassword.message}</span>}
-          </div>
+        <section className="bg-surface-container border border-outline-variant rounded-2xl p-8 space-y-5">
+          <h2 className="text-xl font-semibold text-on-surface">Alterar Senha</h2>
 
-          <button
-            type="submit"
-            disabled={isSubmittingSenha}
-            className="bg-red-600 hover:bg-red-700 transition-colors px-4 py-2 rounded font-medium disabled:opacity-50 cursor-pointer"
-          >
-            {isSubmittingSenha ? 'Alterando...' : 'Alterar Senha'}
-          </button>
-        </form>
-      </section>
+          {sucessoSenhaForm && (
+            <p className="text-on-surface text-sm bg-surface-container-high border border-outline-variant rounded-lg p-2">
+              {sucessoSenhaForm}
+            </p>
+          )}
+
+          {erroSenhaForm && (
+            <p className="text-error text-sm text-center bg-error-container/20 border border-error-container rounded-lg p-2">
+              {erroSenhaForm}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmitSenha(onAlterar)} className="space-y-4">
+
+            <div>
+              <label className="block text-sm text-on-surface-variant mb-1">
+                Senha Atual
+              </label>
+              <input
+                type="password"
+                {...registerSenha('currentPassword')}
+                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+              />
+              {errorsSenha.currentPassword && (
+                <span className="text-error text-xs mt-1 block">
+                  {errorsSenha.currentPassword.message}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm text-on-surface-variant mb-1">
+                Nova Senha
+              </label>
+              <input
+                type="password"
+                {...registerSenha('newPassword')}
+                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+              />
+              {errorsSenha.newPassword && (
+                <span className="text-error text-xs mt-1 block">
+                  {errorsSenha.newPassword.message}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm text-on-surface-variant mb-1">
+                Confirmar Nova Senha
+              </label>
+              <input
+                type="password"
+                {...registerSenha('confirmPassword')}
+                className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+              />
+              {errorsSenha.confirmPassword && (
+                <span className="text-error text-xs mt-1 block">
+                  {errorsSenha.confirmPassword.message}
+                </span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmittingSenha}
+              className="w-full bg-surface-container-high text-on-surface border border-outline-variant rounded-lg py-2 font-semibold cursor-pointer hover:brightness-90 disabled:opacity-50 transition"
+            >
+              {isSubmittingSenha ? 'Alterando...' : 'Alterar Senha'}
+            </button>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }

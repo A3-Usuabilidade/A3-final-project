@@ -8,12 +8,14 @@ import Entrar from './paginas/auth/Entrar.jsx'
 import Cadastro from './paginas/auth/Cadastro.jsx'
 import RotaProtegida from './componentes/RotaProtegida.jsx'
 import Perfil from './paginas/Perfil.jsx'
+import LayoutApp from './layouts/LayoutApp.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Inicio />} />
+        <Route element={<LayoutApp />}>
+          <Route path="/" element={<Inicio />} />
         <Route element={<LayoutAuth />}>
           <Route path="/entrar" element={<Entrar />} />
           <Route path="/cadastro" element={<Cadastro />} />
@@ -28,6 +30,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/admin" element={<p className="text-white p-8">Em breve — Admin</p>} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,)

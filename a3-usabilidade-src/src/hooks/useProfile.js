@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../servicos/api';
 import useAuth from './useAuth';
 
@@ -40,6 +40,10 @@ export default function useProfile() {
       setCarregando(false);
     }
   }, [usuario]);
+
+  useEffect(() => {
+    carregarPerfil();
+  }, [carregarPerfil]);
 
   return {
     dadosUsuario,

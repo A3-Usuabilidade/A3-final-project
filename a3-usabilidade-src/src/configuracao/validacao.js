@@ -1,24 +1,26 @@
 import { z } from 'zod';
 
-export const esquemaEmail = z.string().email('E-mail inválido');
+// ===========================================
+// Schemas compartilhados
+// ===========================================
 
-export const esquemaSenha = z.string()
-  .min(6, 'A senha deve ter no mínimo 6 caracteres');
+const regexNome = /^[a-zA-ZÀ-ÿ\s]+$/;
+
+export const esquemaEmail = z.email('E-mail inválido');
+export const esquemaSenha = z.string().min(6, 'A senha deve ter no mínimo 6 caracteres');
+
+// ===========================================
+// Login
+// ===========================================
 
 export const esquemaLogin = z.object({
   email: esquemaEmail,
   senha: esquemaSenha,
 });
 
-export const esquemaCadastro = z.object({
-  nome: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
-  email: esquemaEmail,
-  senha: esquemaSenha,
-  confirmarSenha: z.string(),
-}).refine((dados) => dados.senha === dados.confirmarSenha, {
-  message: 'As senhas não conferem',
-  path: ['confirmarSenha'],
-});
+// ===========================================
+// Cadastro
+// ===========================================
 
 export function validarDataNascimento(valor) {
   if (!valor) return { valido: true, valor };
@@ -31,28 +33,53 @@ export function validarDataNascimento(valor) {
   }
   return { valido: true, valor };
 }
+
+export const esquemaCadastro = z.object({
+  nome: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
+  email: esquemaEmail,
+  senha: esquemaSenha,
+  confirmarSenha: z.string(),
+}).refine((dados) => dados.senha === dados.confirmarSenha, {
+  message: 'As senhas não conferem',
+  path: ['confirmarSenha'],
+});
+
+// ===========================================
+// Editar Perfil
+// ===========================================
+
+function idadeMinima13Anos(val) {
+  const minima = new Date();
+  minima.setFullYear(minima.getFullYear() - 13);
+  return new Date(val) <= minima;
+}
+
 export const esquemaEditarPerfil = z.object({
   nome: z
     .string()
     .min(2, 'Nome deve ter no mínimo 2 caracteres')
     .max(50, 'Nome deve ter no máximo 50 caracteres')
-    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
+    .regex(regexNome, 'Nome deve conter apenas letras e espaços'),
 
   dataNascimento: z
     .string()
     .min(1, 'Data de nascimento é obrigatória')
-    .refine((val) => {
-      const resultado = validarDataNascimento(val);
-      return resultado.valido;
-    }, 'Formato deve ser DD/MM/AAAA')
-    .refine((val) => {
-      const [dia, mes, ano] = val.split('/').map(Number);
-      const data = new Date(ano, mes - 1, dia);
-      const minima = new Date();
-      minima.setFullYear(minima.getFullYear() - 13);
-      return data <= minima;
-    }, 'Você deve ter no mínimo 13 anos'),
+    .iso.date('Formato deve ser YYYY-MM-DD')
+    .refine(idadeMinima13Anos, 'Você deve ter no mínimo 13 anos'),
 });
+
+// ===========================================
+// Alterar Senha
+// ===========================================
+
+function senhasConferem(d) {
+  return d.newPassword === d.confirmPassword;
+}
+
+function senhaDiferenteDaAtual(d) {
+  return d.newPassword !== d.currentPassword;
+}
+
 export const esquemaAlterarSenha = z
   .object({
     currentPassword: z
@@ -72,11 +99,11 @@ export const esquemaAlterarSenha = z
       .string()
       .min(1, 'Confirmação de senha é obrigatória'),
   })
-  .refine((d) => d.newPassword === d.confirmPassword, {
+  .refine(senhasConferem, {
     message: 'As senhas não coincidem',
     path: ['confirmPassword'],
   })
-  .refine((d) => d.newPassword !== d.currentPassword, {
+  .refine(senhaDiferenteDaAtual, {
     message: 'A nova senha não pode ser igual à senha atual',
     path: ['newPassword'],
   });

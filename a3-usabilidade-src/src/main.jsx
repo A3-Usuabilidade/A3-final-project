@@ -9,6 +9,8 @@ import Cadastro from './paginas/auth/Cadastro.jsx'
 import RotaProtegida from './componentes/RotaProtegida.jsx'
 import Perfil from './paginas/Perfil.jsx'
 import LayoutApp from './layouts/LayoutApp.jsx'
+import AdminLayout from './layouts/AdminLayout.jsx'
+import Dashboard from './paginas/admin/Dashboard.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -27,7 +29,9 @@ createRoot(document.getElementById('root')).render(
           <Route path="/perfil" element={<Perfil />} /> 
         </Route>
         <Route element={<RotaProtegida apenasAdmin />}>
-          <Route path="/admin" element={<p className="text-white p-8">Em breve — Admin</p>} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

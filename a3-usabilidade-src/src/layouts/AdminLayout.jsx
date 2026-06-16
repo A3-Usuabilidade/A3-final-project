@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import useAuth from '../hooks/useAuth.js';
 import Logo from '../componentes/Logo.jsx';
+import BotaoSair from '../componentes/BotaoSair.jsx';
 
 const LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
@@ -11,7 +11,6 @@ const LINKS = [
 ];
 
 export default function AdminLayout() {
-  const { sair } = useAuth();
   const [menuAberto, setMenuAberto] = useState(false);
 
   return (
@@ -44,12 +43,7 @@ export default function AdminLayout() {
         </nav>
 
         <div className="p-4 border-t border-outline-variant">
-          <button
-            onClick={sair}
-            className="w-full text-left text-sm text-on-surface-variant hover:text-on-surface transition px-4 py-2 rounded-lg hover:bg-surface-container-high"
-          >
-            Sair
-          </button>
+          <BotaoSair className="w-full" />
         </div>
       </aside>
 
@@ -109,12 +103,7 @@ export default function AdminLayout() {
             </nav>
 
             <div className="p-4 border-t border-outline-variant">
-              <button
-                onClick={sair}
-                className="w-full text-left text-sm text-on-surface-variant hover:text-on-surface transition px-4 py-2 rounded-lg hover:bg-surface-container-high"
-              >
-                Sair
-              </button>
+              <BotaoSair className="w-full" />
             </div>
           </aside>
         </div>

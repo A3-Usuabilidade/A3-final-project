@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Gerenciar Empresas</title>
+    <link rel="stylesheet" href="assets/style/styles.css" />
+  </head>
+  <body>
+    <div class="top-accent"></div>
+
+    <header class="floating-header">
+      <nav class="navbar" style="justify-content: space-between;">
+        <h3 style="margin: 0; color: var(--text);">Admin: Empresas</h3>
+        <input id="searchInput" type="search" placeholder="Buscar empresa por nome..." style="width: auto; flex-grow: 1; margin: 0 15px;" />
+        <button id="btnNovaEmpresa" class="btn-cart" type="button">+ Nova Empresa</button>
+      </nav>
+    </header>
+
+    <main class="container">
+      <div id="status" class="status" hidden></div>
+      
+      <div id="empresasList" class="grid"></div>
+    </main>
+
+    <div id="empresaModal" class="modal" aria-hidden="true">
+      <div class="modal-bg" data-close="true"></div>
+      <div class="modal-box" style="width: min(400px, 100%);">
+        <h3 id="modalTitle" style="margin-top: 0;">Nova Empresa</h3>
+        
+        <input type="hidden" id="empresaId" />
+        
+        <label for="empresaNome" style="font-size: 0.85rem; color: var(--muted);">Nome da Empresa</label>
+        <input id="empresaNome" type="text" placeholder="Ex: Nintendo, EA..." style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--line); background: #111; color: white; margin: 8px 0 20px; outline: none;" />
+        
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button id="closeModal" class="btn-light" type="button">Cancelar</button>
+          <button id="saveEmpresa" class="btn-cart" type="button">Salvar</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/script/admin-empresas.js"></script>
+  </body>
+</html>

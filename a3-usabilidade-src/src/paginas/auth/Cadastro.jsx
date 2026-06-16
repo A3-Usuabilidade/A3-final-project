@@ -11,6 +11,7 @@ export default function Cadastro() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [erroForm, setErroForm] = useState(null);
   const navigate = useNavigate();
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,18 +70,23 @@ export default function Cadastro() {
         />
       </div>
 
-      <div>
-        <label className="block text-sm text-on-surface-variant mb-1">Data de Nascimento</label>
-        <input
-          type="text"
-          value={dataNascimento}
-          onChange={(e) => setDataNascimento(e.target.value)}
-          placeholder="DD/MM/AAAA"
-          className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-        />
-        <p className="text-xs text-on-surface-variant mt-1">Formato DD/MM/AAAA</p>
-      </div>
-
+    <div>
+  <label className="block text-sm text-on-surface-variant mb-1">Data de Nascimento</label>
+  <input
+    type="text"
+    value={dataNascimento}
+    onChange={(e) => {
+      let valor = e.target.value.replace(/\D/g, '');
+      if (valor.length > 2) valor = valor.slice(0, 2) + '/' + valor.slice(2);
+      if (valor.length > 5) valor = valor.slice(0, 5) + '/' + valor.slice(5);
+      if (valor.length > 10) valor = valor.slice(0, 10);
+      setDataNascimento(valor);
+    }}
+    placeholder="DD/MM/AAAA"
+    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+  />
+  <p className="text-xs text-on-surface-variant mt-1">Formato DD/MM/AAAA</p>
+</div>
       <div>
         <label className="block text-sm text-on-surface-variant mb-1">Senha</label>
         <input

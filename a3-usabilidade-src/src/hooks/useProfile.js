@@ -14,13 +14,13 @@ export default function useProfile() {
       .then((res) => setDados(res.data))
       .catch(() => setErro('Erro ao carregar dados do perfil'))
       .finally(() => setCarregando(false));
-  }, [usuario?.id]);
+  }, [usuario]);
 
   const atualizar = useCallback(async (dadosAtualizados) => {
     await api.put(`/usuarios/${usuario.id}`, dadosAtualizados);
     const { data } = await api.get(`/usuarios/${usuario.id}`);
     setDados(data);
-  }, [usuario?.id]);
+  }, [usuario]);
 
   const alterarSenha = useCallback(async ({ currentPassword, newPassword }) => {
     await api.put('/auth/change-password', { currentPassword, newPassword });

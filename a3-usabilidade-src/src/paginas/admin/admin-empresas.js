@@ -1,6 +1,5 @@
 const BASE_URL = "http://localhost:3000/api/v1";
 
-// 1. Mapeando os elementos do HTML para o JavaScript
 const el = {
   search: document.getElementById("searchInput"),
   btnNova: document.getElementById("btnNovaEmpresa"),
@@ -14,12 +13,10 @@ const el = {
   status: document.getElementById("status")
 };
 
-// 2. Função para buscar as empresas na API (Método GET)
 async function buscarEmpresas(termoBusca = "") {
   mostrarStatus("Carregando empresas...");
   
   try {
-    // Se tiver algo digitado na busca, adiciona o parâmetro ?nome= na URL
     const url = termoBusca ? `${BASE_URL}/empresas?nome=${termoBusca}` : `${BASE_URL}/empresas`;
     
     const resposta = await fetch(url);
@@ -32,9 +29,8 @@ async function buscarEmpresas(termoBusca = "") {
   }
 }
 
-// 3. Função para desenhar as empresas na tela
 function renderizarEmpresas(empresas) {
-  el.lista.innerHTML = ""; // Limpa a lista antes de desenhar
+  el.lista.innerHTML = "";
   
   if (!empresas || empresas.length === 0) {
     mostrarStatus("Nenhuma empresa encontrada.");
@@ -45,7 +41,7 @@ function renderizarEmpresas(empresas) {
 
   empresas.forEach(empresa => {
     const card = document.createElement("article");
-    card.className = "card content"; // Reaproveitando classes do styles.css
+    card.className = "card content";
     card.style.minHeight = "auto";
     
     card.innerHTML = `
@@ -60,7 +56,6 @@ function renderizarEmpresas(empresas) {
   });
 }
 
-// Funções utilitárias de status
 function mostrarStatus(msg) {
   el.status.hidden = false;
   el.status.textContent = msg;
@@ -71,5 +66,4 @@ function esconderStatus() {
   el.status.textContent = "";
 }
 
-// 4. Inicialização: roda a busca assim que o script é carregado
 buscarEmpresas();

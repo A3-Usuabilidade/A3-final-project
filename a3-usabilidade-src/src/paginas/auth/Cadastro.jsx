@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../servicos/api.js';
 import { esquemaCadastro } from '../../configuracao/validacao.js';
+import BotaoSenha from '../../componentes/ui/Botaosenha.jsx';
 
 export default function Cadastro() {
   const [nome, setNome] = useState('');
@@ -9,6 +10,8 @@ export default function Cadastro() {
   const [dataNascimento, setDataNascimento] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [erroForm, setErroForm] = useState(null);
   const navigate = useNavigate();
 
@@ -83,14 +86,17 @@ export default function Cadastro() {
 
       <div>
         <label className="block text-sm text-on-surface-variant mb-1">Senha</label>
-        <input
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-          className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-          placeholder="Mínimo 8 caracteres"
-        />
+        <div className="relative">
+  <input
+    type={mostrarSenha ? 'text' : 'password'}
+    value={senha}
+    onChange={(e) => setSenha(e.target.value)}
+    required
+    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+    placeholder="Mínimo 8 caracteres"
+  />
+  <BotaoSenha visivel={mostrarSenha} onClick={() => setMostrarSenha(!mostrarSenha)} />
+</div>
         <ul className="text-xs text-on-surface-variant mt-1 space-y-0.5 list-disc list-inside">
           <li>8 a 32 caracteres</li>
           <li>Pelo menos 1 letra maiúscula</li>
@@ -101,17 +107,19 @@ export default function Cadastro() {
       </div>
 
       <div>
-        <label className="block text-sm text-on-surface-variant mb-1">Confirmar Senha</label>
-        <input
-          type="password"
-          value={confirmarSenha}
-          onChange={(e) => setConfirmarSenha(e.target.value)}
-          required
-          className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-          placeholder="Repita a senha"
-        />
-      </div>
-
+  <label className="block text-sm text-on-surface-variant mb-1">Confirmar Senha</label>
+  <div className="relative">
+    <input
+      type={mostrarConfirmarSenha ? 'text' : 'password'}
+      value={confirmarSenha}
+      onChange={(e) => setConfirmarSenha(e.target.value)}
+      required
+      className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+      placeholder="Repita a senha"
+    />
+    <BotaoSenha visivel={mostrarConfirmarSenha} onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)} />
+  </div>
+</div>
       <button
         type="submit"
         className="w-full bg-primary text-on-primary font-semibold rounded-lg py-2 transition cursor-pointer hover:brightness-90"

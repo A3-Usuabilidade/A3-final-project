@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth.js';
 import { esquemaLogin } from '../../configuracao/validacao.js';
+import BotaoSenha from '../../componentes/ui/Botaosenha.jsx';
 
 export default function Entrar() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [lembrar, setLembrar] = useState(false);
   const [erroForm, setErroForm] = useState(null);
   const { entrar, erro } = useAuth();
@@ -52,16 +54,19 @@ export default function Entrar() {
       </div>
 
       <div>
-        <label className="block text-sm text-on-surface-variant mb-1">Senha</label>
-        <input
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-          className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-          placeholder="Sua senha"
-        />
-      </div>
+  <label className="block text-sm text-on-surface-variant mb-1">Senha</label>
+  <div className="relative">
+    <input
+      type={mostrarSenha ? 'text' : 'password'}
+      value={senha}
+      onChange={(e) => setSenha(e.target.value)}
+      required
+      className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+      placeholder="Sua senha"
+    />
+    <BotaoSenha visivel={mostrarSenha} onClick={() => setMostrarSenha(!mostrarSenha)} />
+  </div>
+</div>
 
       <label className="flex items-center gap-2 text-sm text-on-surface-variant cursor-pointer">
         <input

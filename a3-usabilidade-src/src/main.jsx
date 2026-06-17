@@ -11,6 +11,7 @@ import Perfil from './paginas/Perfil.jsx'
 import LayoutApp from './layouts/LayoutApp.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import Dashboard from './paginas/admin/Dashboard.jsx'
+import GerenciarJogos from './paginas/admin/GerenciarJogos.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

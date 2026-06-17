@@ -32,6 +32,7 @@ createRoot(document.getElementById('root')).render(
         <Route element={<RotaProtegida apenasAdmin />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="jogos" element={<GerenciarJogos />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

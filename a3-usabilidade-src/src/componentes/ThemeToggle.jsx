@@ -1,68 +1,76 @@
-import { useEffect, useState } from 'react';
+import useTheme from '../hooks/useTheme.js';
 
-export default function ThemeToggle() {
-  const [dark, setDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
+function SunSymbol({ className = '' }) {
+  return (
+    <svg
+      viewBox="0 0 26 26"
+      className={`absolute inset-0 h-6 w-6 ${className}`}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M3.9 13C3.9 12.6552 3.76304 12.3246 3.51924 12.0808C3.27544 11.837 2.94478 11.7 2.6 11.7H1.3C0.955219 11.7 0.624558 11.837 0.380761 12.0808C0.136964 12.3246 0 12.6552 0 13C0 13.3448 0.136964 13.6754 0.380761 13.9192C0.624558 14.163 0.955219 14.3 1.3 14.3H2.6C2.94478 14.3 3.27544 14.163 3.51924 13.9192C3.76304 13.6754 3.9 13.3448 3.9 13ZM4.732 19.5L3.809 20.423C3.56687 20.6666 3.43097 20.9961 3.43097 21.3395C3.43097 21.6829 3.56687 22.0124 3.809 22.256C4.05257 22.4981 4.38206 22.634 4.7255 22.634C5.06894 22.634 5.39843 22.4981 5.642 22.256L6.565 21.333C6.77797 21.0843 6.88926 20.7644 6.87663 20.4372C6.86399 20.1101 6.72836 19.7997 6.49683 19.5682C6.26531 19.3366 5.95495 19.201 5.62777 19.1884C5.30059 19.1757 4.98069 19.287 4.732 19.5ZM13 3.9C13.3448 3.9 13.6754 3.76304 13.9192 3.51924C14.163 3.27544 14.3 2.94478 14.3 2.6V1.3C14.3 0.955219 14.163 0.624558 13.9192 0.380761C13.6754 0.136964 13.3448 0 13 0C12.6552 0 12.3246 0.136964 12.0808 0.380761C11.837 0.624558 11.7 0.955219 11.7 1.3V2.6C11.7 2.94478 11.837 3.27544 12.0808 3.51924C12.3246 3.76304 12.6552 3.9 13 3.9ZM20.358 6.942C20.699 6.94056 21.0259 6.80517 21.268 6.565L22.191 5.642C22.3271 5.52546 22.4376 5.38205 22.5156 5.22076C22.5937 5.05948 22.6375 4.8838 22.6444 4.70477C22.6514 4.52573 22.6212 4.3472 22.5558 4.18038C22.4905 4.01356 22.3913 3.86205 22.2646 3.73535C22.138 3.60866 21.9864 3.50953 21.8196 3.44417C21.6528 3.37881 21.4743 3.34865 21.2952 3.35556C21.1162 3.36248 20.9405 3.40633 20.7792 3.48436C20.618 3.56239 20.4745 3.67291 20.358 3.809L19.5 4.732C19.2579 4.97557 19.122 5.30506 19.122 5.6485C19.122 5.99194 19.2579 6.32143 19.5 6.565C19.7292 6.79297 20.0351 6.92738 20.358 6.942ZM4.758 6.565C5.00014 6.80517 5.32696 6.94056 5.668 6.942C5.83909 6.94299 6.00869 6.9102 6.16708 6.8455C6.32547 6.78081 6.46953 6.68549 6.591 6.565C6.83313 6.32143 6.96903 5.99194 6.96903 5.6485C6.96903 5.30506 6.83313 4.97557 6.591 4.732L5.668 3.809C5.54764 3.68694 5.40442 3.58977 5.24652 3.52306C5.08861 3.45635 4.91911 3.42139 4.74769 3.42018C4.57628 3.41897 4.4063 3.45154 4.24747 3.51602C4.08864 3.58051 3.94406 3.67564 3.822 3.796C3.69994 3.91636 3.60277 4.05958 3.53606 4.21748C3.46935 4.37539 3.43439 4.54489 3.43318 4.71631C3.43074 5.0625 3.56593 5.39548 3.809 5.642L4.758 6.565ZM24.7 11.7H23.4C23.0552 11.7 22.7246 11.837 22.4808 12.0808C22.237 12.3246 22.1 12.6552 22.1 13C22.1 13.3448 22.237 13.6754 22.4808 13.9192C22.7246 14.163 23.0552 14.3 23.4 14.3H24.7C25.0448 14.3 25.3754 14.163 25.6192 13.9192C25.863 13.6754 26 13.3448 26 13C26 12.6552 25.863 12.3246 25.6192 12.0808C25.3754 11.837 25.0448 11.7 24.7 11.7ZM21.268 19.5C21.021 19.3626 20.736 19.3095 20.4561 19.3486C20.1762 19.3877 19.9167 19.517 19.7168 19.7168C19.517 19.9167 19.3877 20.1762 19.3486 20.4561C19.3095 20.736 19.3626 21.021 19.5 21.268L20.423 22.191C20.6666 22.4331 20.9961 22.569 21.3395 22.569C21.6829 22.569 22.0124 22.4331 22.256 22.191C22.4981 21.9474 22.634 21.6179 22.634 21.2745C22.634 20.9311 22.4981 20.6016 22.256 20.358L21.268 19.5ZM13 5.85C11.5859 5.85 10.2035 6.26934 9.02767 7.05499C7.85186 7.84064 6.93543 8.95732 6.39426 10.2638C5.8531 11.5703 5.7115 13.0079 5.98739 14.3949C6.26327 15.7819 6.94424 17.0559 7.94419 18.0558C8.94413 19.0558 10.2181 19.7367 11.6051 20.0126C12.9921 20.2885 14.4297 20.1469 15.7362 19.6057C17.0427 19.0646 18.1594 18.1481 18.945 16.9723C19.7307 15.7965 20.15 14.4141 20.15 13C20.1466 11.1048 19.3922 9.28812 18.052 7.94798C16.7119 6.60784 14.8952 5.85344 13 5.85ZM13 22.1C12.6552 22.1 12.3246 22.237 12.0808 22.4808C11.837 22.7246 11.7 23.0552 11.7 23.4V24.7C11.7 25.0448 11.837 25.3754 12.0808 25.6192C12.3246 25.863 12.6552 26 13 26C13.3448 26 13.6754 25.863 13.9192 25.6192C14.163 25.3754 14.3 25.0448 14.3 24.7V23.4C14.3 23.0552 14.163 22.7246 13.9192 22.4808C13.6754 22.237 13.3448 22.1 13 22.1Z" />
+    </svg>
+  );
+}
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  }, [dark]);
+function MoonSymbol({ className = '' }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`absolute inset-0 h-6 w-6 ${className}`}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+
+export default function ThemeToggle({
+  dark: darkControlado,
+  onToggle,
+  className = '',
+}) {
+  const { dark: darkHook, toggleTheme } = useTheme();
+
+  const dark = typeof darkControlado === 'boolean' ? darkControlado : darkHook;
+  const classeVisualPadrao = dark
+    ? 'border-[#398ceb]/30 bg-white text-black shadow-[0_12px_30px_rgba(57,140,235,0.18)]'
+    : 'border-[#aed4ff]/20 bg-black text-white shadow-[0_12px_30px_rgba(57,140,235,0.16)]';
+  const classeVisual = className || classeVisualPadrao;
+
+  function lidarComToggle() {
+    if (typeof onToggle === 'function') {
+      onToggle();
+      return;
+    }
+
+    toggleTheme();
+  }
 
   return (
     <button
-      onClick={() => setDark(!dark)}
-      className="fixed bottom-4 right-4 z-50 bg-surface-container border border-outline-variant rounded-full p-3 shadow-lg cursor-pointer transition-all duration-500 ease-in-out hover:brightness-90 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 group"
+      onClick={lidarComToggle}
+      className={`fixed bottom-4 right-4 z-50 rounded-full border p-3 shadow-lg transition-all duration-500 ease-in-out hover:brightness-90 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 group ${classeVisual}`}
       title={dark ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
       aria-label={dark ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
     >
       <span className="relative block w-6 h-6">
-        <svg
-          className={`absolute inset-0 w-6 h-6 transition-all duration-500 ease-in-out ${
+        <SunSymbol
+          className={`transition-all duration-500 ease-in-out ${
             dark
-              ? 'opacity-100 rotate-0 scale-100'
-              : 'opacity-0 rotate-[135deg] scale-50'
-          } text-on-surface`}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="5" fill="currentColor" opacity="0.15" />
-          <circle cx="12" cy="12" r="5" />
-          <path d="M12 1v2" />
-          <path d="M12 21v2" />
-          <path d="M4.22 4.22l1.42 1.42" />
-          <path d="M18.36 18.36l1.42 1.42" />
-          <path d="M1 12h2" />
-          <path d="M21 12h2" />
-          <path d="M4.22 19.78l1.42-1.42" />
-          <path d="M18.36 5.64l1.42-1.42" />
-        </svg>
+              ? 'opacity-100 rotate-0 scale-100 text-black'
+              : 'opacity-0 rotate-[135deg] scale-50 text-black'
+          }`}
+        />
 
-        <svg
-          className={`absolute inset-0 w-6 h-6 transition-all duration-500 ease-in-out ${
+        <MoonSymbol
+          className={`transition-all duration-500 ease-in-out ${
             !dark
-              ? 'opacity-100 rotate-0 scale-100'
-              : 'opacity-0 -rotate-[135deg] scale-50'
-          } text-on-surface-variant`}
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          stroke="currentColor"
-          strokeWidth="1.25"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          <circle cx="18" cy="4.5" r="1" fill="currentColor" opacity="0.7" />
-          <circle cx="5.5" cy="20" r="0.8" fill="currentColor" opacity="0.4" />
-          <circle cx="17" cy="19" r="0.6" fill="currentColor" opacity="0.5" />
-        </svg>
+              ? 'opacity-100 rotate-0 scale-100 text-white'
+              : 'opacity-0 -rotate-[135deg] scale-50 text-white'
+          }`}
+        />
       </span>
     </button>
   );

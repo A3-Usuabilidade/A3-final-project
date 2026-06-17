@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import ThemeToggle from '../componentes/ThemeToggle.jsx';
 
 export default function LayoutAuth() {
   return (
@@ -21,6 +22,8 @@ export default function LayoutAuth() {
       <div className="w-full relative z-10 flex flex-col items-center">
         <Outlet />
       </div>
+
+      <ThemeToggle />
 
       <div className="relative z-10 text-center text-on-surface-variant text-sm mt-8 space-x-2">
         <a href="#" className="hover:text-on-surface transition-colors">Termos de Uso</a>

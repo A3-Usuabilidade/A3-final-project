@@ -54,7 +54,6 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
-  /* compatibilidade com o padrão atual do projeto */
   --surface: var(--background);
   --surface-container-lowest: oklch(0.995 0 0);
   --surface-container-low: oklch(0.985 0 0);
@@ -70,7 +69,6 @@
   --error-container: oklch(0.95 0.04 27);
   --on-error-container: oklch(0.42 0.12 27);
 
-  /* fundo monocromático com azul só como acento */
   --store-bg-gradient: linear-gradient(180deg, oklch(0.995 0 0) 0%, oklch(0.972 0 0) 100%);
   --store-bg-base: oklch(0.985 0 0);
   --store-noise-opacity: 0.045;
@@ -110,7 +108,6 @@
   --sidebar-border: oklch(0.275 0 0);
   --sidebar-ring: oklch(39.145% 0.16064 29.223);
 
-  /* compatibilidade com o padrão atual do projeto */
   --surface: var(--background);
   --surface-container-lowest: oklch(0.165 0 0);
   --surface-container-low: oklch(0.19 0 0);
@@ -126,7 +123,6 @@
   --error-container: oklch(0.28 0.05 22);
   --on-error-container: oklch(0.92 0.04 22);
 
-  /* modo preto */
   --store-bg-gradient: linear-gradient(180deg, oklch(0.145 0 0) 0%, oklch(0.145 0 0) 100%);
   --store-bg-base: oklch(0.145 0 0);
   --store-noise-opacity: 0.085;
@@ -180,29 +176,35 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-html,
-body,
-#root {
-  min-height: 100%;
-}
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  letter-spacing: var(--tracking-normal);
-}
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
 
-button,
-a,
-[role='button'],
-summary {
-  cursor: pointer;
-}
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    letter-spacing: var(--tracking-normal);
+  }
 
-button:disabled,
-[aria-disabled='true'] {
-  cursor: not-allowed;
+  button,
+  a,
+  [role='button'],
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
 }
 
 .nexus-store-bg {

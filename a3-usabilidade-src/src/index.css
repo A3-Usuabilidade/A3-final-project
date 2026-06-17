@@ -58,3 +58,47 @@
   --color-error-container: var(--error-container);
   --color-on-error-container: var(--on-error-container);
 }
+
+button,
+a,
+[role='button'],
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.nexus-store-bg {
+  background:
+    linear-gradient(90deg, #000000 25%, #398ceb 77%, #aed4ff 100%);
+  background-attachment: scroll;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-color: #000000;
+}
+
+.nexus-store-bg::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0.26;
+  background-image:
+    radial-gradient(circle at 22% 28%, rgba(0, 0, 0, 0.74) 0 0.55px, transparent 0.88px),
+    radial-gradient(circle at 68% 56%, rgba(255, 255, 255, 0.14) 0 0.45px, transparent 0.78px),
+    radial-gradient(circle at 84% 72%, rgba(0, 0, 0, 0.58) 0 0.5px, transparent 0.82px);
+  background-size: 2px 2px, 3px 3px, 2.4px 2.4px;
+  mix-blend-mode: soft-light;
+}
+
+.product-card-title {
+  min-height: 2.5rem;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}

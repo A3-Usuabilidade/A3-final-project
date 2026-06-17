@@ -1,4 +1,3 @@
-// src/hooks/useJogos.js
 import { useState, useEffect, useCallback } from 'react';
 import api from '../servicos/api.js';
 

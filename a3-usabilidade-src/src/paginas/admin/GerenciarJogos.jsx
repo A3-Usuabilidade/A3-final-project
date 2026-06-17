@@ -1,4 +1,3 @@
-// src/paginas/admin/GerenciarJogos.jsx
 import { useState } from 'react';
 import useJogos from '../../hooks/useJogos.js';
 
@@ -8,8 +7,8 @@ const CAMPOS_VAZIOS = {
   ano: '',
   preco: '',
   desconto: '',
-  fk_empresa: '',
-  fk_categoria: '',
+  fkEmpresa: '',
+  fkCategoria: '',
 };
 
 export default function GerenciarJogos() {
@@ -19,20 +18,18 @@ export default function GerenciarJogos() {
   const [salvando, setSalvando] = useState(false);
   const [erroForm, setErroForm] = useState(null);
 
-  // Preenche o formulário com os dados atuais do jogo
   const abrirEdicao = (jogo) => {
     setEditandoId(jogo.id);
     setFormulario({
-      nome:         jogo.nome         ?? '',
-      descricao:    jogo.descricao    ?? '',
-      ano:          jogo.ano          ?? '',
-      preco:        jogo.preco        ?? '',
-      desconto:     jogo.desconto     ?? '',
-      fk_empresa:   jogo.fk_empresa   ?? '',
-      fk_categoria: jogo.fk_categoria ?? '',
+      nome:        jogo.nome        ?? '',
+      descricao:   jogo.descricao   ?? '',
+      ano:         jogo.ano         ?? '',
+      preco:       jogo.preco       ?? '',
+      desconto:    jogo.desconto    ?? '',
+      fkEmpresa:   jogo.fkEmpresa   ?? '',
+      fkCategoria: jogo.fkCategoria ?? '',
     });
     setErroForm(null);
-    // Rola até o formulário
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -52,11 +49,11 @@ export default function GerenciarJogos() {
     try {
       const payload = {
         ...formulario,
-        ano:      formulario.ano      ? Number(formulario.ano)      : undefined,
-        preco:    formulario.preco    ? Number(formulario.preco)    : undefined,
-        desconto: formulario.desconto ? Number(formulario.desconto) : undefined,
-        fk_empresa:   formulario.fk_empresa   ? Number(formulario.fk_empresa)   : undefined,
-        fk_categoria: formulario.fk_categoria ? Number(formulario.fk_categoria) : undefined,
+        ano:         formulario.ano         ? Number(formulario.ano)         : undefined,
+        preco:       formulario.preco       ? Number(formulario.preco)       : undefined,
+        desconto:    formulario.desconto    ? Number(formulario.desconto)    : undefined,
+        fkEmpresa:   formulario.fkEmpresa   ? Number(formulario.fkEmpresa)   : undefined,
+        fkCategoria: formulario.fkCategoria ? Number(formulario.fkCategoria) : undefined,
       };
       if (editandoId) {
         await atualizarJogo(editandoId, payload);
@@ -89,58 +86,48 @@ export default function GerenciarJogos() {
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold text-on-surface">Gerenciar Jogos</h1>
 
-      {/* Formulário */}
       <section className="bg-surface-container border border-outline-variant rounded-2xl p-6">
         <h2 className="text-lg font-semibold text-on-surface mb-4">
           {editandoId ? 'Editando jogo' : 'Novo Jogo'}
         </h2>
-
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-          {/* Nome */}
           <input required placeholder="Nome do jogo" value={formulario.nome}
             onChange={set('nome')}
             className={`col-span-full ${inputClass}`} />
 
-          {/* Empresa — select */}
-          <select required value={formulario.fk_empresa} onChange={set('fk_empresa')} className={inputClass}>
+          <select required value={formulario.fkEmpresa} onChange={set('fkEmpresa')} className={inputClass}>
             <option value="">Selecione a empresa...</option>
             {empresas.map((e) => (
               <option key={e.id} value={e.id}>{e.nome}</option>
             ))}
           </select>
 
-          {/* Categoria — select */}
-          <select required value={formulario.fk_categoria} onChange={set('fk_categoria')} className={inputClass}>
+          <select required value={formulario.fkCategoria} onChange={set('fkCategoria')} className={inputClass}>
             <option value="">Selecione a categoria...</option>
             {categorias.map((c) => (
               <option key={c.id} value={c.id}>{c.nome}</option>
             ))}
           </select>
 
-          {/* Ano */}
           <input required type="number" placeholder="Ano de lançamento" value={formulario.ano}
             onChange={set('ano')}
             className={inputClass} />
 
-          {/* Preço */}
           <input required type="number" step="0.01" placeholder="Preço (ex: 49.90)" value={formulario.preco}
             onChange={set('preco')}
             className={inputClass} />
 
-          {/* Desconto */}
-          <input type="number" step="0.01" min="0" max="100" placeholder="Desconto % (opcional)" value={formulario.desconto}
+          <input type="number" step="0.01" min="0" max="100"
+            placeholder="Desconto % (opcional)" value={formulario.desconto}
             onChange={set('desconto')}
             className={`col-span-full ${inputClass}`} />
 
-          {/* Descrição */}
           <textarea placeholder="Descrição (opcional)" value={formulario.descricao}
             onChange={set('descricao')} rows={3}
             className={`col-span-full ${inputClass} resize-none`} />
 
-          {erroForm && (
-            <p className="col-span-full text-error text-sm">{erroForm}</p>
-          )}
+          {erroForm && <p className="col-span-full text-error text-sm">{erroForm}</p>}
 
           <div className="col-span-full flex gap-3">
             <button type="submit" disabled={salvando}
@@ -157,12 +144,10 @@ export default function GerenciarJogos() {
         </form>
       </section>
 
-      {/* Tabela */}
       <section className="bg-surface-container border border-outline-variant rounded-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-outline-variant">
           <h2 className="text-lg font-semibold text-on-surface">Jogos Cadastrados</h2>
         </div>
-
         {carregando ? (
           <p className="text-on-surface-variant text-center py-12">Carregando...</p>
         ) : erro ? (
@@ -183,11 +168,10 @@ export default function GerenciarJogos() {
             </thead>
             <tbody>
               {jogos.map((jogo) => (
-                <tr key={jogo.id}
-                  className="border-b border-outline-variant hover:bg-surface-container-high transition">
+                <tr key={jogo.id} className="border-b border-outline-variant hover:bg-surface-container-high transition">
                   <td className="px-6 py-3 text-on-surface text-sm font-medium">{jogo.nome}</td>
-                  <td className="px-6 py-3 text-on-surface-variant text-sm">{nomeEmpresa(jogo.fk_empresa)}</td>
-                  <td className="px-6 py-3 text-on-surface-variant text-sm">{nomeCategoria(jogo.fk_categoria)}</td>
+                  <td className="px-6 py-3 text-on-surface-variant text-sm">{nomeEmpresa(jogo.fkEmpresa)}</td>
+                  <td className="px-6 py-3 text-on-surface-variant text-sm">{nomeCategoria(jogo.fkCategoria)}</td>
                   <td className="px-6 py-3 text-on-surface-variant text-sm">{jogo.ano}</td>
                   <td className="px-6 py-3 text-on-surface text-sm text-right">
                     R$ {Number(jogo.preco).toFixed(2)}

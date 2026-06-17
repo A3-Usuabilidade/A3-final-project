@@ -30,20 +30,18 @@ export default function useJogos() {
   useEffect(() => { buscarDados(); }, [buscarDados]);
 
   const criarJogo = async (dados) => {
-    const { data } = await api.post('/jogos', dados);
-    await buscarDados();
-    return data;
+    const { data: novoJogo } = await api.post('/jogos', dados);
+    setJogos((prev) => [...prev, novoJogo]);
   };
 
   const atualizarJogo = async (id, dados) => {
-    const { data } = await api.put(`/jogos/${id}`, dados);
-    await buscarDados();
-    return data;
+    const { data: jogoAtualizado } = await api.put(`/jogos/${id}`, dados);
+    setJogos((prev) => prev.map((j) => (j.id === id ? jogoAtualizado : j)));
   };
 
   const deletarJogo = async (id) => {
     await api.delete(`/jogos/${id}`);
-    await buscarDados();
+    setJogos((prev) => prev.filter((j) => j.id !== id));
   };
 
   return { jogos, categorias, empresas, carregando, erro, criarJogo, atualizarJogo, deletarJogo };

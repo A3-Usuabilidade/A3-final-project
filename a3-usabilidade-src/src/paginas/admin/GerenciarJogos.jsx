@@ -110,11 +110,11 @@ export default function GerenciarJogos() {
             ))}
           </select>
 
-          <input required type="number" placeholder="Ano de lançamento" value={formulario.ano}
+          <input required type="number" min="1950" placeholder="Ano de lançamento" value={formulario.ano}
             onChange={set('ano')}
             className={inputClass} />
 
-          <input required type="number" step="0.01" placeholder="Preço (ex: 49.90)" value={formulario.preco}
+          <input required type="number" step="0.01" min="0" placeholder="Preço (ex: 49.90)" value={formulario.preco}
             onChange={set('preco')}
             className={inputClass} />
 

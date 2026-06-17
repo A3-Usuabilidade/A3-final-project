@@ -1,15 +1,17 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './index.css';
-import Inicio from './paginas/Inicio.jsx';
-import LayoutAuth from './layouts/LayoutAuth.jsx';
-import Entrar from './paginas/auth/Entrar.jsx';
-import Cadastro from './paginas/auth/Cadastro.jsx';
 import RotaProtegida from './componentes/RotaProtegida.jsx';
-import Perfil from './paginas/Perfil.jsx';
 import LayoutApp from './layouts/LayoutApp.jsx';
+import AdminLayout from './layouts/AdminLayout.jsx';
+import LayoutAuth from './layouts/LayoutAuth.jsx';
+import Cadastro from './paginas/auth/Cadastro.jsx';
+import Entrar from './paginas/auth/Entrar.jsx';
+import Inicio from './paginas/Inicio.jsx';
+import Perfil from './paginas/Perfil.jsx';
 import Loja from './paginas/Loja.jsx';
+import Dashboard from './paginas/admin/Dashboard.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -31,7 +33,9 @@ createRoot(document.getElementById('root')).render(
           </Route>
 
           <Route element={<RotaProtegida apenasAdmin />}>
-            <Route path="/admin" element={<p className="p-8 text-white">Em breve - Admin</p>} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+            </Route>
           </Route>
         </Route>
 

@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useAuth from '../hooks/useAuth.js';
 import useProfile from '../hooks/useProfile.js';
+import BotaoSair from '../componentes/BotaoSair.jsx';
 import { esquemaEditarPerfil, esquemaAlterarSenha } from '../configuracao/validacao.js';
 
 export default function Perfil() {
-  const navigate = useNavigate();
-  const { sair } = useAuth();
   const { dados, carregando, erro, atualizar, alterarSenha } = useProfile();
   const [erroForm, setErroForm] = useState(null);
   const [sucessoForm, setSucessoForm] = useState(null);
@@ -76,11 +73,6 @@ export default function Perfil() {
     }
   };
 
-  const handleSair = () => {
-    sair();
-    navigate('/');
-  };
-
   const cancelarEdicao = () => {
     setEditarAtivo(false);
     setErroForm(null);
@@ -128,12 +120,7 @@ export default function Perfil() {
 
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-on-surface">Meu Perfil</h1>
-          <button
-            onClick={handleSair}
-            className="text-sm text-on-surface-variant hover:text-on-surface border border-outline-variant rounded-lg px-4 py-1.5 transition cursor-pointer"
-          >
-            Sair
-          </button>
+          <BotaoSair className="border border-outline-variant px-4 py-1.5" />
         </div>
 
         <section className="bg-surface-container border border-outline-variant rounded-2xl p-8 space-y-5">

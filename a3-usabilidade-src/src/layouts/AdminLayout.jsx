@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import Logo from '../componentes/Logo.jsx';
 import BotaoSair from '../componentes/BotaoSair.jsx';
 
@@ -53,9 +54,7 @@ export default function AdminLayout() {
           onClick={() => setMenuAberto(true)}
           className="md:hidden fixed top-4 left-4 z-50 bg-surface-container border border-outline-variant rounded-lg p-2"
         >
-          <svg className="w-5 h-5 text-on-surface" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <Menu size={20} className="text-on-surface" />
         </button>
       )}
 
@@ -72,13 +71,8 @@ export default function AdminLayout() {
                 <Logo className="h-7" />
                 <span className="text-lg font-bold text-on-surface">NEXUS</span>
               </div>
-              <button
-                onClick={() => setMenuAberto(false)}
-                className="text-on-surface-variant hover:text-on-surface"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+              <button onClick={() => setMenuAberto(false)} className="text-on-surface-variant hover:text-on-surface">
+                <X size={20} />
               </button>
             </div>
 

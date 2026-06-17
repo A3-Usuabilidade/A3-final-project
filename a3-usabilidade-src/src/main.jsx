@@ -12,6 +12,7 @@ import LayoutApp from './layouts/LayoutApp.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import Dashboard from './paginas/admin/Dashboard.jsx'
 import GerenciarJogos from './paginas/admin/GerenciarJogos.jsx'
+import GerenciarEmpresas from './paginas/admin/GerenciarEmpresas.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="jogos" element={<GerenciarJogos />} />
+            <Route path="empresas" element={<GerenciarEmpresas />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import useTheme from '../hooks/useTheme.js';
 
 function SunSymbol({ className = '' }) {
   return (
@@ -31,25 +31,13 @@ export default function ThemeToggle({
   onToggle,
   className = '',
 }) {
-  const [darkInterno, setDarkInterno] = useState(() => {
-    if (typeof window === 'undefined') return false;
+  const { dark: darkHook, toggleTheme } = useTheme();
 
-    const temaSalvo = localStorage.getItem('theme');
-    if (temaSalvo) return temaSalvo === 'dark';
-
-    return document.documentElement.classList.contains('dark');
-  });
-
-  const dark = typeof darkControlado === 'boolean' ? darkControlado : darkInterno;
+  const dark = typeof darkControlado === 'boolean' ? darkControlado : darkHook;
   const classeVisualPadrao = dark
     ? 'border-[#398ceb]/30 bg-white text-black shadow-[0_12px_30px_rgba(57,140,235,0.18)]'
     : 'border-[#aed4ff]/20 bg-black text-white shadow-[0_12px_30px_rgba(57,140,235,0.16)]';
   const classeVisual = className || classeVisualPadrao;
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-  }, [dark]);
 
   function lidarComToggle() {
     if (typeof onToggle === 'function') {
@@ -57,7 +45,7 @@ export default function ThemeToggle({
       return;
     }
 
-    setDarkInterno((valorAtual) => !valorAtual);
+    toggleTheme();
   }
 
   return (

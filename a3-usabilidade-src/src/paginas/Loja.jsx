@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '../componentes/Logo.jsx';
-import ThemeToggle from '../componentes/ThemeToggle.jsx';
+import useTheme from '../hooks/useTheme.js';
 import api from '../servicos/api.js';
 
 const categoriaPadrao = ['Todos'];
@@ -619,6 +619,7 @@ function ModalDetalhes({ jogo, aoFechar, aoAdicionar }) {
 }
 
 export default function Loja() {
+  const { dark: estaTemaEscuro } = useTheme();
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState(categoriaPadrao);
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todos');
@@ -630,10 +631,6 @@ export default function Loja() {
   const [itensCarrinho, setItensCarrinho] = useState([]);
   const [menuMobileAberto, setMenuMobileAberto] = useState(false);
   const [filtroMobileAberto, setFiltroMobileAberto] = useState(false);
-  const [estaTemaEscuro, setEstaTemaEscuro] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark');
-  });
 
   async function carregarDados() {
     setCarregando(true);
@@ -679,11 +676,6 @@ export default function Loja() {
     return () => window.removeEventListener('resize', ajustarLayoutDesktop);
   }, []);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', estaTemaEscuro);
-    localStorage.setItem('theme', estaTemaEscuro ? 'dark' : 'light');
-  }, [estaTemaEscuro]);
-
   const jogosFiltrados = useMemo(() => {
     return jogos.filter((jogo) => {
       const bateCategoria = categoriaAtiva === 'Todos' || jogo.categoria === categoriaAtiva;
@@ -708,10 +700,6 @@ export default function Loja() {
     } catch (erroCapturado) {
       setErroCarrinho(erroCapturado.response?.data?.message || 'Nao foi possivel adicionar o jogo ao carrinho. Tente novamente.');
     }
-  }
-
-  function alternarTema() {
-    setEstaTemaEscuro((estadoAtual) => !estadoAtual);
   }
 
   return (
@@ -804,14 +792,6 @@ export default function Loja() {
           </div>
         </div>
       </section>
-
-      <ThemeToggle
-        dark={estaTemaEscuro}
-        onToggle={alternarTema}
-        className={estaTemaEscuro
-          ? 'border-[#398ceb]/30 bg-white text-black shadow-[0_12px_30px_rgba(57,140,235,0.18)]'
-          : 'border-[#aed4ff]/20 bg-black text-white shadow-[0_12px_30px_rgba(57,140,235,0.16)]'}
-      />
 
       <ModalDetalhes jogo={jogoSelecionado} aoFechar={() => setJogoSelecionado(null)} aoAdicionar={adicionarAoCarrinho} />
     </main>

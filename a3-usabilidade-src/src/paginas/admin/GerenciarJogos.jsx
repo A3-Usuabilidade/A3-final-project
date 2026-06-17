@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import useJogos from '../../hooks/useJogos.js';
+import BotaoAcao from '../../componentes/BotaoAcao.jsx';
+import ModalConfirmacao from '../../componentes/ModalConfirmacao.jsx';
 
 const CAMPOS_VAZIOS = {
   nome: '',
@@ -17,6 +19,7 @@ export default function GerenciarJogos() {
   const [editandoId, setEditandoId] = useState(null);
   const [salvando, setSalvando] = useState(false);
   const [erroForm, setErroForm] = useState(null);
+  const [modalExcluir, setModalExcluir] = useState({ aberto: false, id: null, erro: null });
 
   const abrirEdicao = (jogo) => {
     setEditandoId(jogo.id);
@@ -68,14 +71,17 @@ export default function GerenciarJogos() {
     }
   };
 
-  const handleDeletar = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir este jogo?')) return;
+  const confirmarExclusao = async () => {
+    setModalExcluir((prev) => ({ ...prev, erro: null }));
     try {
-      await deletarJogo(id);
+      await deletarJogo(modalExcluir.id);
+      setModalExcluir({ aberto: false, id: null, erro: null });
     } catch {
-      alert('Erro ao excluir jogo.');
+      setModalExcluir((prev) => ({ ...prev, erro: 'Erro ao excluir jogo.' }));
     }
   };
+
+  const abrirExclusao = (id) => setModalExcluir({ aberto: true, id, erro: null });
 
   const nomeCategoria = (id) => categorias.find((c) => c.id === id)?.nome ?? '—';
   const nomeEmpresa   = (id) => empresas.find((e) => e.id === id)?.nome   ?? '—';
@@ -177,14 +183,8 @@ export default function GerenciarJogos() {
                     R$ {Number(jogo.preco).toFixed(2)}
                   </td>
                   <td className="px-6 py-3 text-right space-x-2">
-                    <button onClick={() => abrirEdicao(jogo)}
-                      className="text-xs text-primary border border-primary/40 rounded px-3 py-1 hover:bg-primary/10 transition">
-                      Editar
-                    </button>
-                    <button onClick={() => handleDeletar(jogo.id)}
-                      className="text-xs text-error border border-error/40 rounded px-3 py-1 hover:bg-error/10 transition">
-                      Excluir
-                    </button>
+                    <BotaoAcao label="Editar" onClick={() => abrirEdicao(jogo)} variante="editar" />
+                    <BotaoAcao label="Excluir" onClick={() => abrirExclusao(jogo.id)} variante="excluir" />
                   </td>
                 </tr>
               ))}
@@ -192,6 +192,14 @@ export default function GerenciarJogos() {
           </table>
         )}
       </section>
+      <ModalConfirmacao
+        aberto={modalExcluir.aberto}
+        titulo="Excluir jogo"
+        mensagem="Tem certeza que deseja excluir este jogo? Esta ação não pode ser desfeita."
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setModalExcluir({ aberto: false, id: null, erro: null })}
+        erro={modalExcluir.erro}
+      />
     </div>
   );
 }

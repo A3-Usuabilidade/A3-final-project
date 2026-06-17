@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import useEmpresas from '../../hooks/useEmpresas.js';
+import BotaoAcao from '../../componentes/BotaoAcao.jsx';
+import ModalConfirmacao from '../../componentes/ModalConfirmacao.jsx';
 
 const CAMPOS_VAZIOS = {
   nome: '',
@@ -11,6 +13,7 @@ export default function GerenciarEmpresas() {
   const [editandoId, setEditandoId] = useState(null);
   const [salvando, setSalvando] = useState(false);
   const [erroForm, setErroForm] = useState(null);
+  const [modalExcluir, setModalExcluir] = useState({ aberto: false, id: null, erro: null });
 
   const abrirEdicao = (empresa) => {
     setEditandoId(empresa.id);
@@ -48,14 +51,17 @@ export default function GerenciarEmpresas() {
     }
   };
 
-  const handleDeletar = async (id) => {
-    if (!confirm('Tem certeza que deseja excluir esta empresa?')) return;
+  const confirmarExclusao = async () => {
+    setModalExcluir((prev) => ({ ...prev, erro: null }));
     try {
-      await deletarEmpresa(id);
+      await deletarEmpresa(modalExcluir.id);
+      setModalExcluir({ aberto: false, id: null, erro: null });
     } catch {
-      alert('Erro ao excluir empresa.');
+      setModalExcluir((prev) => ({ ...prev, erro: 'Erro ao excluir empresa.' }));
     }
   };
+
+  const abrirExclusao = (id) => setModalExcluir({ aberto: true, id, erro: null });
 
   const inputClass = 'bg-surface border border-outline-variant rounded-lg px-4 py-2 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary';
 
@@ -113,14 +119,8 @@ export default function GerenciarEmpresas() {
                 <tr key={empresa.id} className="border-b border-outline-variant hover:bg-surface-container-high transition">
                   <td className="px-6 py-3 text-on-surface text-sm font-medium">{empresa.nome}</td>
                   <td className="px-6 py-3 text-right space-x-2">
-                    <button onClick={() => abrirEdicao(empresa)}
-                      className="text-xs text-primary border border-primary/40 rounded px-3 py-1 hover:bg-primary/10 transition">
-                      Editar
-                    </button>
-                    <button onClick={() => handleDeletar(empresa.id)}
-                      className="text-xs text-error border border-error/40 rounded px-3 py-1 hover:bg-error/10 transition">
-                      Excluir
-                    </button>
+                    <BotaoAcao label="Editar" onClick={() => abrirEdicao(empresa)} variante="editar" />
+                    <BotaoAcao label="Excluir" onClick={() => abrirExclusao(empresa.id)} variante="excluir" />
                   </td>
                 </tr>
               ))}
@@ -128,6 +128,14 @@ export default function GerenciarEmpresas() {
           </table>
         )}
       </section>
+      <ModalConfirmacao
+        aberto={modalExcluir.aberto}
+        titulo="Excluir empresa"
+        mensagem="Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita."
+        onConfirmar={confirmarExclusao}
+        onCancelar={() => setModalExcluir({ aberto: false, id: null, erro: null })}
+        erro={modalExcluir.erro}
+      />
     </div>
   );
 }

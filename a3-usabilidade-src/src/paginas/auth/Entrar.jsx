@@ -36,9 +36,9 @@ export default function Entrar() {
     <div className="max-w-md mx-auto w-full pt-8">
       <div className="bg-surface-container border border-outline-variant rounded-2xl p-6 md:p-8">
         <div className="text-center mb-6">
-          <Logo className="h-10 mx-auto mb-3" />
-          <h1 className="text-2xl font-bold text-on-surface">NEXUS</h1>
-          <p className="text-on-surface-variant mt-1 text-sm">Entre na sua biblioteca e loja.</p>
+          <Logo className="h-20 mx-auto mb-3" />
+          <h1 className="text-5xl font-bold text-on-surface"><strong className="font-black text-slate-950 dark:text-white">NEXUS</strong></h1>
+          <p className="text-on-surface-variant mt-1 text-sm">Faça <strong className="font-black text-slate-950 dark:text-white">login</strong> para acessar a sua biblioteca de jogos.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -80,7 +80,7 @@ export default function Entrar() {
           type="checkbox"
           checked={lembrar}
           onChange={(e) => setLembrar(e.target.checked)}
-          className="accent-primary w-4 h-4"
+          className="h-4 w-4 rounded border border-slate-400 bg-slate-300/70 accent-[#398CEB]"
         />
         Lembre-se de mim
       </label>
@@ -88,14 +88,14 @@ export default function Entrar() {
       <div className="flex items-center gap-2">
         <button
           type="submit"
-          className="flex-[2] bg-primary text-on-primary font-semibold rounded-lg py-2 transition cursor-pointer hover:brightness-90"
+          className="flex-[2] rounded-full border border-primary bg-primary py-2.5 font-semibold text-on-primary transition cursor-pointer hover:brightness-90"
         >
           Login
         </button>
         <span className="text-on-surface-variant text-sm">ou</span>
         <Link
           to="/cadastro"
-          className="flex-[1] inline-flex items-center justify-center text-center text-sm border border-primary/40 text-on-surface rounded-lg py-2 transition hover:bg-primary/10 hover:border-primary hover:shadow-[0_0_16px_var(--color-primary)]"
+          className="flex-[1] inline-flex items-center justify-center rounded-full border border-primary py-2.5 text-center text-sm font-semibold text-on-surface transition [background-size:200%_100%] bg-[linear-gradient(to_right,var(--color-primary)_0%,var(--color-primary)_50%,transparent_50%,transparent_100%)] bg-right hover:bg-left hover:text-black"
         >
           Criar Conta
         </Link>

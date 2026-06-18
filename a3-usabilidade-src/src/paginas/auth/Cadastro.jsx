@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from '../../servicos/api.js';
-import { esquemaCadastro } from '../../configuracao/validacao.js';
-import BotaoSenha from '../../componentes/ui/Botaosenha.jsx';
 import Logo from '../../componentes/Logo.jsx';
+import BotaoSenha from '../../componentes/ui/Botaosenha.jsx';
+import { esquemaCadastro } from '../../configuracao/validacao.js';
+import api from '../../servicos/api.js';
+
+const PLACEHOLDER_SENHA = '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022';
+const TEXTO_AUTENTICA = 'aut\u00eantica.';
+const TEXTO_INFO = 'Informe suas informa\u00e7\u00f5es logo abaixo,';
+const TEXTO_EXEMPLO_NOME = 'Ex: Jo\u00e3o Silva';
+const TEXTO_MES = 'M\u00eas';
+const TEXTO_JA_POSSUI = 'J\u00e1 possui uma conta? ';
 
 export default function Cadastro() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
+  const [diaNascimento, setDiaNascimento] = useState('');
+  const [mesNascimento, setMesNascimento] = useState('');
+  const [anoNascimento, setAnoNascimento] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -16,11 +25,20 @@ export default function Cadastro() {
   const [erroForm, setErroForm] = useState(null);
   const navigate = useNavigate();
 
+  const dataNascimento = [diaNascimento, mesNascimento, anoNascimento].join('/');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErroForm(null);
 
-    const resultado = esquemaCadastro.safeParse({ nome, email, dataNascimento, senha, confirmarSenha });
+    const resultado = esquemaCadastro.safeParse({
+      nome,
+      email,
+      dataNascimento,
+      senha,
+      confirmarSenha,
+    });
+
     if (!resultado.success) {
       setErroForm(resultado.error.issues[0].message);
       return;
@@ -37,127 +55,158 @@ export default function Cadastro() {
   };
 
   return (
-    <div className="w-full pt-8">
-      <div className="flex flex-col md:flex-row items-stretch justify-between px-6 md:px-12">
-
-        <div className="flex flex-col items-center md:items-start text-center md:text-left justify-between">
-          <div className="flex items-center gap-3">
-            <Logo className="h-32" />
-            <h1 className="text-5xl font-bold text-on-surface">NEXUS</h1>
+    <div className="min-h-screen px-4 py-5 sm:px-6 sm:py-6 xl:px-8 xl:py-5">
+      <div className="mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-[1080px] grid-cols-1 items-center gap-6 xl:grid-cols-[minmax(400px,1fr)_minmax(390px,0.66fr)] xl:gap-6">
+        <section className="flex min-h-full flex-col justify-center text-slate-950 dark:text-white xl:min-h-[32rem] xl:max-w-[26rem] xl:justify-between xl:self-center xl:py-0 xl:justify-self-start">
+          <div className="flex items-center gap-5 xl:pl-0">
+            <Logo className="h-[4.35rem] w-[3rem] text-slate-950 dark:text-white sm:h-[4.9rem] sm:w-[3.4rem]" />
+            <h1 className="text-[2.45rem] font-black tracking-[0.02em] text-slate-950 dark:text-white sm:text-[3.85rem]">NEXUS</h1>
           </div>
-          <p className="text-on-surface-variant text-xl mt-3 leading-relaxed">
-            Sua biblioteca e loja de jogos mais{' '}
-            <span className="text-primary font-medium">autêntica</span>
-            .
-          </p>
-        </div>
 
-        <div className="w-full md:w-1/3">
-          <div className="bg-surface-container border border-outline-variant rounded-2xl p-6 md:p-8">
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-on-surface">Criar conta</h2>
-              <p className="text-on-surface-variant text-sm mt-1">
-                Informe suas informações logo abaixo para concluir o{' '}
-                <strong className="text-on-surface font-semibold">cadastro</strong>.
+          <div className="max-w-[22rem] pt-10 xl:pl-0 xl:pb-0">
+            <p className="text-[1.82rem] font-medium leading-[1.03] tracking-[0.01em] text-slate-950 dark:text-white sm:text-[2.75rem]">
+              Sua biblioteca e loja
+              <br />
+              de jogos mais
+              <br />
+              <span className="text-[#398CEB]">{TEXTO_AUTENTICA}</span>
+            </p>
+          </div>
+        </section>
+
+        <section className="mx-auto flex w-full max-w-[28rem] flex-col items-center xl:items-stretch xl:justify-self-end">
+          <div className="w-full rounded-[2rem] border border-slate-950/8 bg-[rgba(255,255,255,0.7)] p-4 text-slate-950 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-2xl dark:border-white/10 dark:bg-[rgba(22,26,33,0.9)] dark:text-white dark:shadow-[0_24px_80px_rgba(0,0,0,0.4)] sm:p-5 xl:min-h-[32rem] xl:p-5">
+            <div className="mb-5">
+              <h2 className="text-[2.1rem] font-black tracking-[-0.03em] sm:text-[2.75rem]">Criar Conta</h2>
+              <p className="mt-2.5 max-w-[18rem] text-[0.92rem] font-medium leading-[1.08] text-slate-700 dark:text-white/72 sm:text-[0.9rem]">
+                {TEXTO_INFO}
+                <br />
+                para concluir o <strong className="font-black text-slate-950 dark:text-white">cadastro.</strong>
               </p>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
 
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               {erroForm && (
-                <p className="text-error text-sm text-center bg-error-container/20 border border-error-container rounded-lg p-2">
+                <p className="rounded-xl border border-red-300/30 bg-red-500/12 p-3 text-center text-sm text-red-100">
                   {erroForm}
                 </p>
               )}
 
               <div>
-                <label className="block text-sm text-on-surface-variant mb-1">Nome Completo</label>
+                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">Nome Completo</label>
                 <input
                   type="text"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   required
-                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-                  placeholder="Ex: Joao Silva"
+                  className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                  placeholder={TEXTO_EXEMPLO_NOME}
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-on-surface-variant mb-1">E-mail</label>
+                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">E-mail</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+                  className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                   placeholder="exemplo@nexus.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-on-surface-variant mb-1">Data de Nascimento</label>
-                <input
-                  type="text"
-                  value={dataNascimento}
-                  onChange={(e) => setDataNascimento(e.target.value)}
-                  placeholder="DD/MM/AAAA"
-                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-                />
-                <p className="text-xs text-on-surface-variant mt-1">Formato DD/MM/AAAA</p>
-              </div>
-
-              <div>
-                <label className="block text-sm text-on-surface-variant mb-1">Senha</label>
-                <div className="relative">
+                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">{'Data de Nascimento'}</label>
+                <div className="flex h-12 items-center rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-center focus-within:border-[#398CEB] dark:border-transparent dark:bg-[#1d1a1a]">
                   <input
-                    type={mostrarSenha ? 'text' : 'password'}
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    required
-                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-                    placeholder="Mínimo 8 caracteres"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={2}
+                    value={diaNascimento}
+                    onChange={(e) => setDiaNascimento(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    placeholder="Dia"
                   />
-                  <BotaoSenha visivel={mostrarSenha} onClick={() => setMostrarSenha(!mostrarSenha)} />
+                  <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={2}
+                    value={mesNascimento}
+                    onChange={(e) => setMesNascimento(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    placeholder={TEXTO_MES}
+                  />
+                  <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    value={anoNascimento}
+                    onChange={(e) => setAnoNascimento(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    placeholder="Ano"
+                  />
                 </div>
-                <ul className="text-xs text-on-surface-variant mt-1 space-y-0.5 list-disc list-inside">
-                  <li>8 a 32 caracteres</li>
-                  <li>Pelo menos 1 letra maiúscula</li>
-                  <li>Pelo menos 1 letra minúscula</li>
-                  <li>Pelo menos 1 número</li>
-                  <li>Pelo menos 1 caractere especial (@$!%*?&.)</li>
-                </ul>
               </div>
 
-              <div>
-                <label className="block text-sm text-on-surface-variant mb-1">Confirmar Senha</label>
-                <div className="relative">
-                  <input
-                    type={mostrarConfirmarSenha ? 'text' : 'password'}
-                    value={confirmarSenha}
-                    onChange={(e) => setConfirmarSenha(e.target.value)}
-                    required
-                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-                    placeholder="Repita a senha"
-                  />
-                  <BotaoSenha visivel={mostrarConfirmarSenha} onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)} />
+              <div className="grid gap-3 md:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">Senha</label>
+                  <div className="relative">
+                    <input
+                      type={mostrarSenha ? 'text' : 'password'}
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      required
+                      className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                      placeholder={PLACEHOLDER_SENHA}
+                    />
+                    <BotaoSenha
+                      visivel={mostrarSenha}
+                      onClick={() => setMostrarSenha(!mostrarSenha)}
+                      className="text-slate-500 hover:text-slate-800 dark:text-white/60 dark:hover:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">Confirmar Senha</label>
+                  <div className="relative">
+                    <input
+                      type={mostrarConfirmarSenha ? 'text' : 'password'}
+                      value={confirmarSenha}
+                      onChange={(e) => setConfirmarSenha(e.target.value)}
+                      required
+                      className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                      placeholder={PLACEHOLDER_SENHA}
+                    />
+                    <BotaoSenha
+                      visivel={mostrarConfirmarSenha}
+                      onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
+                      className="text-slate-500 hover:text-slate-800 dark:text-white/60 dark:hover:text-white"
+                    />
+                  </div>
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-lg font-semibold transition-all duration-300 cursor-pointer bg-[linear-gradient(to_right,var(--primary)_50%,transparent_50%)] bg-[length:200%_100%] bg-right-bottom text-on-surface border border-primary hover:bg-left-bottom hover:text-on-primary"
+                className="mt-2 h-[3.35rem] w-full rounded-full border border-[#398CEB] bg-[linear-gradient(to_right,#4a95ef_0%,#4a95ef_50%,transparent_50%,transparent_100%)] bg-[length:200%_100%] bg-right text-[1.25rem] font-black text-slate-950 transition-all duration-300 hover:bg-left hover:text-black dark:text-white"
               >
-                Cadastrar
+                {'Cadastrar \u2192'}
               </button>
-
-              <p className="text-center text-on-surface-variant text-sm">
-                Já possui uma conta?{' '}
-                <Link to="/entrar" className="text-on-surface-variant hover:text-on-surface underline">
-                  Entrar
-                </Link>
-              </p>
             </form>
           </div>
-        </div>
+
+          <p className="mt-3 text-center text-[0.95rem] font-medium text-black dark:text-black">
+            {TEXTO_JA_POSSUI}
+            <Link to="/entrar" className="font-black text-black transition hover:opacity-75 dark:text-black">
+              Entrar.
+            </Link>
+          </p>
+        </section>
       </div>
     </div>
   );

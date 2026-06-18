@@ -1,108 +1,260 @@
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Logo from '../componentes/Logo.jsx';
-import cyberpunk from '../recursos/imagens/jogos/cyberpunk-2077.jpg';
-import minecraft from '../recursos/imagens/jogos/minecraft.jpg';
-import witcher from '../recursos/imagens/jogos/the-witcher-3.jpg';
-import gta from '../recursos/imagens/jogos/gta-v.jpg';
-import elden from '../recursos/imagens/jogos/elden-ring.jpg';
 
-const CARDS = [
-  { nome: 'Cyberpunk 2077', src: cyberpunk, x: -360, w: 220, h: 300, rotate: '-8deg', scale: 0.85, opacity: '0.55', z: 10 },
-  { nome: 'Minecraft', src: minecraft, x: -190, w: 260, h: 360, rotate: '-4deg', scale: 0.95, opacity: '0.85', z: 20 },
-  { nome: 'The Witcher 3', src: witcher, x: 0, w: 320, h: 460, rotate: '0deg', scale: 1, opacity: '1', z: 40 },
-  { nome: 'Grand Theft Auto V', src: gta, x: 190, w: 260, h: 360, rotate: '4deg', scale: 0.95, opacity: '0.85', z: 20 },
-  { nome: 'Elden Ring', src: elden, x: 360, w: 220, h: 300, rotate: '8deg', scale: 0.85, opacity: '0.55', z: 10 },
+/* ─── capas dos jogos (extras → src/recursos/imagens/jogos) ─── */
+import imgWitcher  from '../recursos/imagens/jogos/the-witcher-3-cover.jpg';
+import imgGta      from '../recursos/imagens/jogos/gta-v-cover.jpg';
+import imgElden    from '../recursos/imagens/jogos/elden-ring.jpg';
+import imgCyberpunk from '../recursos/imagens/jogos/cyberpunk-2077.jpg';
+import imgHorizon  from '../recursos/imagens/jogos/horizon-zero-dawn.jpg';
+
+/*
+ * Fan de 5 cards:
+ *  - central: maior, sem rotação, opacidade 1, z alto
+ *  - laterais internos: médios, rotação ±4°
+ *  - laterais externos: menores, rotação ±9°, opacidade baixa
+ * Hover: scale-up via CSS class, sem framer-motion
+ */
+const CAPAS = [
+  {
+    nome: 'Cyberpunk 2077',
+    src: imgCyberpunk,
+    left: 'calc(50% - 380px)',
+    w: 195,
+    h: 275,
+    rotate: '-10deg',
+    scale: 0.8,
+    opacity: 0.45,
+    z: 1,
+  },
+  {
+    nome: 'Horizon Zero Dawn',
+    src: imgHorizon,
+    left: 'calc(50% - 205px)',
+    w: 240,
+    h: 340,
+    rotate: '-4deg',
+    scale: 0.93,
+    opacity: 0.75,
+    z: 2,
+  },
+  {
+    nome: 'The Witcher 3',
+    src: imgWitcher,
+    left: '50%',
+    w: 295,
+    h: 415,
+    rotate: '0deg',
+    scale: 1,
+    opacity: 1,
+    z: 5,
+  },
+  {
+    nome: 'Grand Theft Auto V',
+    src: imgGta,
+    left: 'calc(50% + 165px)',
+    w: 240,
+    h: 340,
+    rotate: '4deg',
+    scale: 0.93,
+    opacity: 0.75,
+    z: 2,
+  },
+  {
+    nome: 'Elden Ring',
+    src: imgElden,
+    left: 'calc(50% + 345px)',
+    w: 195,
+    h: 275,
+    rotate: '10deg',
+    scale: 0.8,
+    opacity: 0.45,
+    z: 1,
+  },
 ];
 
 export default function Inicio() {
   return (
-    <div className="bg-surface min-h-screen flex flex-col relative overflow-hidden">
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none -z-10"
-        aria-hidden="true"
-      />
+    <>
+      <style>{`
+        /* entrada suave — sem framer-motion */
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0);    }
+        }
+        .anim-0 { animation: fadeUp .6s .00s ease both; }
+        .anim-1 { animation: fadeUp .6s .10s ease both; }
+        .anim-2 { animation: fadeUp .6s .22s ease both; }
+        .anim-3 { animation: fadeUp .6s .36s ease both; }
 
-      <header className="w-full pt-10 px-12 absolute top-0 z-50 flex justify-between items-center">
-        <nav className="flex gap-8 text-on-surface-variant font-medium text-lg">
-          <Link to="/loja" className="hover:text-on-surface transition-colors">
-            Games
-          </Link>
-          <Link to="/loja" className="hover:text-on-surface transition-colors">
-            Store
-          </Link>
-        </nav>
+        /* hover nos cards: leve escala + sobe opacidade */
+        .capa-card {
+          transition: transform .28s ease, opacity .28s ease, box-shadow .28s ease, z-index 0s .28s;
+        }
+        .capa-card:hover {
+          transform: translateX(-50%) rotate(var(--r)) scale(calc(var(--s) + 0.06)) !important;
+          opacity: 1 !important;
+          box-shadow: 0 28px 56px -8px rgba(57,140,235,.42) !important;
+          z-index: 20 !important;
+          transition: transform .28s ease, opacity .28s ease, box-shadow .28s ease, z-index 0s 0s;
+        }
+      `}</style>
 
-        <div className="flex items-center justify-center gap-3 absolute left-1/2 -translate-x-1/2">
-          <Logo className="h-8 w-[22px] text-on-surface" />
-          <span className="text-4xl font-bold text-on-surface tracking-tight">Nexus</span>
-        </div>
+      <div className="relative min-h-screen flex flex-col overflow-hidden bg-background text-foreground">
 
-        <div className="flex items-center gap-4">
-          <Link
-            to="/entrar"
-            className="px-6 py-2.5 rounded-full border border-outline-variant text-on-surface font-medium hover:bg-surface-container-high transition-colors"
-          >
-            Entrar
-          </Link>
-          <Link
-            to="/cadastro"
-            className="px-6 py-2.5 rounded-full bg-primary text-on-primary font-medium hover:opacity-90 transition shadow-lg shadow-primary/30"
-          >
-            Cadastrar
-          </Link>
-        </div>
-      </header>
+        {/* ───────────── HEADER ───────────── */}
+        <header className="relative z-20 w-full">
+          <div className="mx-auto flex max-w-7xl items-center px-8 py-6 sm:px-12">
 
-      <main className="flex-grow flex flex-col items-center justify-center pt-48 pb-20 relative z-10 w-full max-w-7xl mx-auto">
-        <div className="text-center mb-24 px-4">
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight max-w-4xl mx-auto text-on-surface tracking-tight">
-            Sua biblioteca e loja de jogos
-            <br />
-            mais <span className="text-primary">autêntica</span>.
-          </h1>
-        </div>
+            {/* NAV — esquerda */}
+            <nav className="flex items-center gap-7 mr-auto" aria-label="Navegação principal">
+              <Link
+                to="/loja"
+                className="text-sm font-black text-foreground hover:text-foreground/70 transition-colors"
+              >
+                Jogos
+              </Link>
+              <Link
+                to="/loja"
+                className="text-sm font-black text-foreground hover:text-foreground/70 transition-colors"
+              >
+                Loja
+              </Link>
+            </nav>
 
-        <div className="relative w-full h-[500px] flex justify-center items-center">
-          {CARDS.map((card) => (
-            <div
-              key={card.nome}
-              className="absolute rounded-2xl overflow-hidden ring-1 ring-outline-variant/20"
-              style={{
-                left: `calc(50% + ${card.x}px)`,
-                width: card.w,
-                height: card.h,
-                transform: `translateX(-50%) rotate(${card.rotate}) scale(${card.scale})`,
-                opacity: card.opacity,
-                zIndex: card.z,
-                boxShadow:
-                  card.z >= 40
-                    ? '0 25px 50px -12px rgba(0,0,0,0.7)'
-                    : '0 12px 30px -8px rgba(0,0,0,0.4)',
-              }}
-              aria-label={`Capa do jogo ${card.nome}`}
+            {/* LOGO — centralizada absoluta */}
+            <Link
+              to="/"
+              className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 select-none"
+              aria-label="Nexus — página inicial"
             >
-              <img
-                src={card.src}
-                alt={card.nome}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </div>
-      </main>
+              <Logo className="h-12 w-9 text-foreground" />
+              <span className="text-3xl font-black tracking-[0.04em] text-foreground">
+                NEXUS
+              </span>
+            </Link>
 
-      <footer className="w-full py-8 text-center z-20">
-        <div className="flex justify-center items-center gap-8 text-sm text-on-surface-variant">
-          <span>Nexus © 2024</span>
-          <span className="hover:text-on-surface transition-colors cursor-default">
-            Termos de Uso
-          </span>
-          <span className="hover:text-on-surface transition-colors cursor-default">
-            Privacidade
-          </span>
-        </div>
-      </footer>
-    </div>
+            {/* AÇÕES — direita */}
+            <div className="ml-auto flex items-center gap-3">
+              <Link
+                to="/entrar"
+                className="inline-flex h-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/6 px-5 text-sm font-bold text-foreground/80 backdrop-blur transition hover:border-[#398CEB]/50 hover:text-foreground"
+              >
+                Entrar
+              </Link>
+              <Link
+                to="/cadastro"
+                className="hidden sm:inline-flex h-10 items-center justify-center rounded-full bg-[#398CEB] px-5 text-sm font-bold text-white shadow-[0_12px_32px_rgba(57,140,235,.35)] transition hover:bg-[#4a95ef] active:scale-95"
+              >
+                Criar conta
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        {/* ───────────── HERO ───────────── */}
+        <main className="relative z-10 flex flex-1 flex-col items-center pt-10 pb-8 px-5">
+
+
+          {/* título */}
+          <h1 className="anim-0 mt-6 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-foreground sm:text-5xl lg:text-[3.6rem]">
+            Sua loja e biblioteca
+            <span className="block text-[#398CEB]">
+              em um só lugar.
+            </span>
+          </h1>
+
+          {/* subtítulo */}
+          <p className="anim-2 mt-4 max-w-lg text-center text-base leading-7 text-foreground/55 sm:text-lg">
+            Explore jogos, gerencie sua coleção e descubra novos títulos com uma experiência limpa e consistente.
+          </p>
+
+          {/* CTAs */}
+          <div className="anim-3 mt-7 flex flex-col items-center gap-3 sm:flex-row">
+            <Link
+              to="/cadastro"
+              className="inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-[#398CEB] px-7 text-sm font-bold text-white shadow-[0_12px_32px_rgba(57,140,235,.35)] transition hover:bg-[#4a95ef] active:scale-95"
+            >
+              Criar conta grátis
+            </Link>
+            <Link
+              to="/loja"
+              className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-full border border-foreground/15 bg-foreground/6 px-7 text-sm font-bold text-foreground/80 backdrop-blur transition hover:border-[#398CEB]/45 hover:text-foreground"
+            >
+              Ver jogos
+              <ArrowRight size={15} strokeWidth={2.5} aria-hidden="true" />
+            </Link>
+          </div>
+
+          {/* ───────── FAN DE CAPAS ───────── */}
+          <div
+            className="anim-3 relative w-full mt-14 sm:mt-16 select-none"
+            style={{ height: 460 }}
+            aria-label="Capas de jogos em destaque"
+          >
+            {CAPAS.map((c) => (
+              <div
+                key={c.nome}
+                className="capa-card absolute"
+                style={{
+                  left: c.left,
+                  width: c.w,
+                  height: c.h,
+                  zIndex: c.z,
+                  opacity: c.opacity,
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  /* variáveis para o :hover no CSS */
+                  '--r': c.rotate,
+                  '--s': c.scale,
+                  transform: `translateX(-50%) rotate(${c.rotate}) scale(${c.scale})`,
+                  boxShadow: c.z >= 5
+                    ? '0 24px 48px -6px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.06)'
+                    : '0 10px 26px -5px rgba(0,0,0,.5)',
+                  cursor: 'default',
+                }}
+                title={c.nome}
+              >
+                <img
+                  src={c.src}
+                  alt={`Capa: ${c.nome}`}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  draggable="false"
+                />
+                {/* borda interna sutil no card central */}
+                {c.z >= 5 && (
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{ boxShadow: 'inset 0 0 0 1px rgba(174,212,255,.15)', borderRadius: 14 }}
+                  />
+                )}
+              </div>
+            ))}
+
+
+          </div>
+        </main>
+
+        {/* ───────────── FOOTER ───────────── */}
+        <footer className="relative z-20 border-t border-foreground/10 bg-foreground/4">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-8 py-5 text-sm text-foreground/40 sm:px-12 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-2">
+              <Logo className="h-6 w-5 text-foreground/50" />
+              <span className="font-bold text-foreground/55">NEXUS</span>
+            </div>
+            <div className="flex flex-wrap gap-x-5 gap-y-1">
+              <Link to="/entrar" className="hover:text-foreground transition-colors">Entrar</Link>
+              <Link to="/cadastro" className="hover:text-foreground transition-colors">Criar conta</Link>
+              <Link to="/loja" className="hover:text-foreground transition-colors">Loja</Link>
+            </div>
+            <p className="text-xs font-medium uppercase tracking-[.12em] text-foreground/25">
+              © 2026 Nexus Digital Store
+            </p>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 }

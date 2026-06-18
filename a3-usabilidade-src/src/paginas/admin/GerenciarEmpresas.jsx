@@ -2,6 +2,7 @@ import { useState } from 'react';
 import useEmpresas from '../../hooks/useEmpresas.js';
 import BotaoAcao from '../../componentes/BotaoAcao.jsx';
 import ModalConfirmacao from '../../componentes/ModalConfirmacao.jsx';
+import { esquemaEmpresa } from '../../configuracao/validacao.js';
 
 const CAMPOS_VAZIOS = {
   nome: '',
@@ -37,15 +38,23 @@ export default function GerenciarEmpresas() {
     e.preventDefault();
     setSalvando(true);
     setErroForm(null);
+
+    const resultado = esquemaEmpresa.safeParse(formulario);
+    if (!resultado.success) {
+      setErroForm(resultado.error.issues[0].message);
+      setSalvando(false);
+      return;
+    }
+
     try {
       if (editandoId) {
-        await atualizarEmpresa(editandoId, formulario);
+        await atualizarEmpresa(editandoId, resultado.data);
       } else {
-        await criarEmpresa(formulario);
+        await criarEmpresa(resultado.data);
       }
       cancelar();
     } catch (err) {
-      setErroForm(err.response?.data?.message || err.response?.data?.error || 'Erro ao salvar empresa.');
+      setErroForm(mensagemDeErro(err, 'Erro ao salvar empresa.'));
     } finally {
       setSalvando(false);
     }
@@ -64,6 +73,12 @@ export default function GerenciarEmpresas() {
   const abrirExclusao = (id) => setModalExcluir({ aberto: true, id, erro: null });
 
   const inputClass = 'bg-surface border border-outline-variant rounded-lg px-4 py-2 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary';
+
+  function mensagemDeErro(err, fallback) {
+    const erro = err.response?.data?.error || err.response?.data?.message || fallback;
+    if (erro.includes('UNIQUE')) return 'Já existe uma empresa com este nome.';
+    return erro;
+  }
 
   return (
     <div className="space-y-8">
@@ -107,6 +122,7 @@ export default function GerenciarEmpresas() {
         ) : empresas.length === 0 ? (
           <p className="text-on-surface-variant text-center py-12">Nenhuma empresa cadastrada.</p>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-surface-container-high text-on-surface-variant text-xs font-semibold uppercase tracking-wider">
@@ -126,6 +142,7 @@ export default function GerenciarEmpresas() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
       <ModalConfirmacao

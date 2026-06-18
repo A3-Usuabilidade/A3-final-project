@@ -17,6 +17,7 @@ import Checkout from './paginas/Checkout.jsx';
 import Perfil from './paginas/Perfil.jsx';
 import Wishlist from './paginas/Wishlist.jsx';
 import Biblioteca from './paginas/Biblioteca.jsx';
+import Pedidos from './paginas/Pedidos.jsx';
 import Dashboard from './paginas/admin/Dashboard.jsx';
 import GerenciarJogos from './paginas/admin/GerenciarJogos.jsx';
 import GerenciarEmpresas from './paginas/admin/GerenciarEmpresas.jsx';
@@ -45,6 +46,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="/loja" element={<Loja />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/biblioteca" element={<Biblioteca />} />
+              <Route path="/pedidos" element={<Pedidos />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>

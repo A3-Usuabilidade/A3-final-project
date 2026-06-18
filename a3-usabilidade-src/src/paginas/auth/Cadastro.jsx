@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../componentes/Logo.jsx';
 import BotaoSenha from '../../componentes/ui/Botaosenha.jsx';
@@ -23,9 +23,28 @@ export default function Cadastro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [erroForm, setErroForm] = useState(null);
+  const diaNascimentoRef = useRef(null);
+  const mesNascimentoRef = useRef(null);
+  const anoNascimentoRef = useRef(null);
   const navigate = useNavigate();
 
   const dataNascimento = [diaNascimento, mesNascimento, anoNascimento].join('/');
+
+  const handleDatePartChange = (valor, setValor, limite, proximoRef) => {
+    const valorLimpo = valor.replace(/\D/g, '').slice(0, limite);
+    setValor(valorLimpo);
+
+    if (valorLimpo.length === limite && proximoRef?.current) {
+      proximoRef.current.focus();
+      proximoRef.current.select?.();
+    }
+  };
+
+  const handleDatePartKeyDown = (event, valorAtual, refAnterior) => {
+    if (event.key === 'Backspace' && !valorAtual && refAnterior?.current) {
+      refAnterior.current.focus();
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -135,31 +154,36 @@ export default function Cadastro() {
                 <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">{'Data de Nascimento'}</label>
                 <div className="flex h-12 items-center rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-center focus-within:border-[#398CEB] dark:border-transparent dark:bg-[#1d1a1a]">
                   <input
+                    ref={diaNascimentoRef}
                     type="text"
                     inputMode="numeric"
                     maxLength={2}
                     value={diaNascimento}
-                    onChange={(e) => setDiaNascimento(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                    onChange={(e) => handleDatePartChange(e.target.value, setDiaNascimento, 2, mesNascimentoRef)}
                     className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Dia"
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
                   <input
+                    ref={mesNascimentoRef}
                     type="text"
                     inputMode="numeric"
                     maxLength={2}
                     value={mesNascimento}
-                    onChange={(e) => setMesNascimento(e.target.value.replace(/\D/g, '').slice(0, 2))}
+                    onChange={(e) => handleDatePartChange(e.target.value, setMesNascimento, 2, anoNascimentoRef)}
+                    onKeyDown={(e) => handleDatePartKeyDown(e, mesNascimento, diaNascimentoRef)}
                     className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder={TEXTO_MES}
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
                   <input
+                    ref={anoNascimentoRef}
                     type="text"
                     inputMode="numeric"
                     maxLength={4}
                     value={anoNascimento}
-                    onChange={(e) => setAnoNascimento(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    onChange={(e) => handleDatePartChange(e.target.value, setAnoNascimento, 4)}
+                    onKeyDown={(e) => handleDatePartKeyDown(e, anoNascimento, mesNascimentoRef)}
                     className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Ano"
                   />

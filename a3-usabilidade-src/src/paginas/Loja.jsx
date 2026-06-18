@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '../componentes/Logo.jsx';
 import useTheme from '../hooks/useTheme.js';
+import useWishlist from '../hooks/useWishlist.js';
+import useAvaliacoes from '../hooks/useAvaliacoes.js';
 import api from '../servicos/api.js';
 
 const categoriaPadrao = ['Todos'];
@@ -216,31 +218,64 @@ function IconeChevron({ aberta = false }) {
   );
 }
 
-function IconeEstrela({ ativa = false }) {
+function IconeEstrela({ ativa = false, clicavel = false, onClick }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className={`h-5 w-5 ${ativa ? 'text-[#398ceb]' : 'text-white/24'}`}
+      className={`h-5 w-5 ${ativa ? 'text-[#f59e0b]' : 'text-white/24'} ${clicavel ? 'cursor-pointer transition hover:scale-110' : ''}`}
       fill="currentColor"
       stroke="currentColor"
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
+      onClick={onClick}
     >
       <path d="m12 2.8 2.75 5.57 6.15.9-4.45 4.34 1.05 6.12L12 16.84l-5.5 2.89 1.05-6.12L3.1 9.27l6.15-.9L12 2.8Z" />
     </svg>
   );
 }
 
-function AvaliacaoEstrelas() {
+function IconeCoracao({ cheio = false }) {
+  if (cheio) {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+      </svg>
+    );
+  }
   return (
-    <div className="mt-2 flex items-center gap-1.5" aria-label="Nota 4 de 5">
-      {[0, 1, 2, 3].map((item) => (
-        <IconeEstrela key={item} ativa />
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+function SeletorEstrelas({ valor, onChange }) {
+  const [hover, setHover] = useState(0);
+  return (
+    <div className="flex items-center gap-1" onMouseLeave={() => setHover(0)}>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <IconeEstrela
+          key={n}
+          ativa={n <= (hover || valor)}
+          clicavel
+          onClick={() => onChange(n)}
+        />
       ))}
-      <IconeEstrela />
-      <span className="ml-2 text-base font-bold text-white">4.0</span>
+    </div>
+  );
+}
+
+function AvaliacaoEstrelas({ media, total }) {
+  const notaArredondada = Math.round(media || 0);
+  return (
+    <div className="mt-2 flex items-center gap-1.5" aria-label={`Nota ${media || 0} de 5`}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <IconeEstrela key={i} ativa={i < notaArredondada} />
+      ))}
+      <span className="ml-2 text-base font-bold text-white">{media ? media.toFixed(1) : '—'}</span>
+      {total > 0 && <span className="text-xs text-white/50">({total})</span>}
     </div>
   );
 }
@@ -336,6 +371,22 @@ function NavbarLoja({ busca, setBusca, quantidadeCarrinho, menuMobileAberto, set
               </span>
             </Link>
             <Link
+              to="/biblioteca"
+              onClick={() => setMenuMobileAberto(false)}
+              className={`flex w-full items-center justify-between rounded-[1rem] px-4 py-3 text-left text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${itemMenuClasse}`}
+            >
+              <span>Biblioteca</span>
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            </Link>
+            <Link
+              to="/wishlist"
+              onClick={() => setMenuMobileAberto(false)}
+              className={`flex w-full items-center justify-between rounded-[1rem] px-4 py-3 text-left text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${itemMenuClasse}`}
+            >
+              <span>Lista de Desejos</span>
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+            </Link>
+            <Link
               to="/perfil"
               onClick={() => setMenuMobileAberto(false)}
               className={`flex w-full items-center justify-between rounded-[1rem] px-4 py-3 text-left text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${itemMenuClasse}`}
@@ -375,10 +426,26 @@ function NavbarLoja({ busca, setBusca, quantidadeCarrinho, menuMobileAberto, set
               )}
             </Link>
             <Link
+              to="/wishlist"
+              aria-label="Lista de desejos"
+              title="Lista de Desejos"
+              className={`grid h-9 w-9 place-items-center rounded-full transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb] ${hoverItemClasse}`}
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+            </Link>
+            <Link
+              to="/biblioteca"
+              aria-label="Biblioteca"
+              title="Biblioteca"
+              className={`grid h-9 w-9 place-items-center rounded-full transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb] ${hoverItemClasse}`}
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            </Link>
+            <Link
               to="/perfil"
               aria-label="Abrir perfil"
               title="Perfil"
-              className={`ml-5 grid h-9 w-9 place-items-center rounded-full transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb] ${hoverItemClasse}`}
+              className={`ml-3 grid h-9 w-9 place-items-center rounded-full transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb] ${hoverItemClasse}`}
             >
               <IconeUsuario tom={tomIcone} />
             </Link>
@@ -483,7 +550,7 @@ function CategoriasLoja({ categorias, categoriaAtiva, setCategoriaAtiva, filtroM
   );
 }
 
-function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
+function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, aoAlternarDesejo }) {
   const cardClasse = estaTemaEscuro
     ? 'bg-black ring-[#aed4ff]/18 shadow-[0_20px_42px_rgba(57,140,235,0.12)] hover:ring-[#398ceb]/60'
     : 'bg-white ring-black/10 shadow-[0_20px_42px_rgba(57,140,235,0.12)] hover:ring-[#398ceb]/52';
@@ -512,8 +579,18 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
       onKeyDown={abrirDetalhesComTeclado}
       className={`group flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-lg ring-1 transition duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#398ceb] sm:min-h-[372px] ${cardClasse}`}
     >
-      <div className="block aspect-[4/3.18] w-full shrink-0 overflow-hidden text-left sm:aspect-[4/3.28]">
+      <div className="relative block aspect-[4/3.18] w-full shrink-0 overflow-hidden text-left sm:aspect-[4/3.28]">
         <CapaJogo jogo={jogo} className="transition duration-300 group-hover:scale-105" />
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); aoAlternarDesejo(jogo.id); }}
+          aria-label={desejado ? 'Remover da lista de desejos' : 'Adicionar à lista de desejos'}
+          className={`absolute right-2 top-2 grid h-8 w-8 place-items-center rounded-full backdrop-blur-sm transition hover:scale-110 sm:h-9 sm:w-9 ${
+            desejado ? 'bg-black/50 text-[#e74c6f]' : 'bg-black/40 text-white/70 opacity-0 group-hover:opacity-100'
+          }`}
+        >
+          <IconeCoracao cheio={desejado} />
+        </button>
       </div>
       <div className="grid min-h-[124px] flex-1 grid-cols-[minmax(0,1fr)_auto] gap-2 p-3.5 sm:min-h-[158px] sm:gap-3 sm:p-4.5">
         <div className="flex min-w-0 flex-col text-left">
@@ -524,10 +601,7 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
         </div>
         <button
           type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            aoAdicionar(jogo);
-          }}
+          onClick={(event) => { event.stopPropagation(); aoAdicionar(jogo); }}
           aria-label={`Adicionar ${jogo.nome} ao carrinho`}
           title="Adicionar ao carrinho"
           className={`grid h-10 w-10 self-end place-items-center rounded-full shadow-lg transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb] sm:h-12 sm:w-12 ${botaoCarrinhoClasse}`}
@@ -539,79 +613,172 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
   );
 }
 
-function ModalDetalhes({ jogo, aoFechar, aoAdicionar }) {
-  useEffect(() => {
-    function fecharComEsc(event) {
-      if (event.key === 'Escape') aoFechar();
-    }
+function ModalDetalhes({ jogo, aoFechar, aoAdicionar, desejado, aoAlternarDesejo }) {
+  const [aba, setAba] = useState('detalhes');
+  const [notaForm, setNotaForm] = useState(0);
+  const [comentarioForm, setComentarioForm] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [msgSucesso, setMsgSucesso] = useState('');
+  const { avaliacoes, media, total, minhaAvaliacao, carregando: carregandoAval, erro: erroAval, carregarAvaliacoesJogo, carregarMinhaAvaliacao, enviar } = useAvaliacoes();
 
+  useEffect(() => {
+    function fecharComEsc(event) { if (event.key === 'Escape') aoFechar(); }
     window.addEventListener('keydown', fecharComEsc);
     return () => window.removeEventListener('keydown', fecharComEsc);
   }, [aoFechar]);
 
+  useEffect(() => {
+    if (jogo?.id) {
+      carregarAvaliacoesJogo(jogo.id);
+      carregarMinhaAvaliacao(jogo.id);
+      setAba('detalhes');
+      setMsgSucesso('');
+    }
+  }, [jogo?.id, carregarAvaliacoesJogo, carregarMinhaAvaliacao]);
+
+  useEffect(() => {
+    if (minhaAvaliacao) {
+      setNotaForm(minhaAvaliacao.nota || 0);
+      setComentarioForm(minhaAvaliacao.comentario || '');
+    } else {
+      setNotaForm(0);
+      setComentarioForm('');
+    }
+  }, [minhaAvaliacao]);
+
   if (!jogo) return null;
+
+  async function handleEnviarAvaliacao(e) {
+    e.preventDefault();
+    if (notaForm < 1) return;
+    setEnviando(true);
+    setMsgSucesso('');
+    try {
+      await enviar(jogo.id, notaForm, comentarioForm);
+      setMsgSucesso(minhaAvaliacao ? 'Avaliação atualizada!' : 'Avaliação enviada!');
+    } catch { /* erro tratado no hook */ }
+    setEnviando(false);
+  }
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="titulo-detalhe-jogo">
       <button type="button" className="absolute inset-0 cursor-default" aria-label="Fechar modal" onClick={aoFechar} />
       <section className="relative grid w-full max-w-4xl gap-6 rounded-lg bg-black p-4 text-white shadow-2xl ring-1 ring-white/10 md:grid-cols-[0.95fr_1.05fr]">
-        <button
-          type="button"
-          onClick={aoFechar}
-          aria-label="Fechar detalhes"
-          className="absolute right-4 top-4 rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#398ceb]"
-        >
-          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
+        <button type="button" onClick={aoFechar} aria-label="Fechar detalhes" className="absolute right-4 top-4 z-10 rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white">
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
         </button>
         <div className="overflow-hidden rounded-lg">
           <CapaJogo jogo={jogo} className="aspect-[4/5] md:aspect-[4/4.7]" />
         </div>
-        <div className="flex min-w-0 flex-col justify-center pr-2 md:pr-10">
+        <div className="flex min-w-0 flex-col pr-2 md:pr-6">
           <p className="text-sm font-semibold text-[#398ceb]">{jogo.categoria} - {jogo.empresa}</p>
           <h2 id="titulo-detalhe-jogo" className="mt-2 text-3xl font-black leading-none md:text-4xl">{jogo.nome}</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Ano</p>
-              <p className="mt-1 text-lg font-semibold text-white">{jogo.ano || 'Nao informado'}</p>
-            </div>
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Preco</p>
-              <p className="mt-1 text-lg font-semibold text-white">{formatarMoeda(jogo.preco)}</p>
-            </div>
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Empresa</p>
-              <p className="mt-1 text-base font-semibold text-white">{jogo.empresa}</p>
-            </div>
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Categoria</p>
-              <p className="mt-1 text-base font-semibold text-white">{jogo.categoria}</p>
-            </div>
-          </div>
-          <div className="mt-5 rounded-lg bg-white/8 p-4 ring-1 ring-white/10">
-            <p className="text-xs font-bold uppercase text-white/65">Nota</p>
-            <AvaliacaoEstrelas />
-          </div>
-          <div className="mt-5 rounded-lg bg-white/5 p-4 ring-1 ring-white/8">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Descricao</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">{jogo.descricao || 'Descricao indisponivel na API.'}</p>
-          </div>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => aoAdicionar(jogo)}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 font-bold text-black transition hover:bg-[#aed4ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb]"
-            >
-              Adicionar ao carrinho <IconeCarrinho />
-            </button>
-            <button
-              type="button"
-              className="rounded-full border border-white/20 px-5 py-3 font-bold text-white transition hover:border-[#398ceb] hover:text-[#398ceb] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb]"
-            >
-              Lista de desejos
+
+          {/* Abas */}
+          <div className="mt-5 flex gap-1 rounded-full bg-white/8 p-1">
+            <button type="button" onClick={() => setAba('detalhes')} className={`flex-1 rounded-full px-4 py-2 text-sm font-bold transition ${aba === 'detalhes' ? 'bg-white text-black' : 'text-white/70 hover:text-white'}`}>Detalhes</button>
+            <button type="button" onClick={() => setAba('avaliacoes')} className={`flex-1 rounded-full px-4 py-2 text-sm font-bold transition ${aba === 'avaliacoes' ? 'bg-white text-black' : 'text-white/70 hover:text-white'}`}>
+              Avaliações {total > 0 && <span className="ml-1 text-xs opacity-70">({total})</span>}
             </button>
           </div>
+
+          {/* Aba Detalhes */}
+          {aba === 'detalhes' && (
+            <div className="mt-4 flex flex-1 flex-col overflow-y-auto" style={{ maxHeight: '420px' }}>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Ano</p>
+                  <p className="mt-1 text-lg font-semibold">{jogo.ano || 'N/I'}</p>
+                </div>
+                <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Preço</p>
+                  <p className="mt-1 text-lg font-semibold">{formatarMoeda(jogo.preco)}</p>
+                </div>
+                <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Empresa</p>
+                  <p className="mt-1 text-base font-semibold">{jogo.empresa}</p>
+                </div>
+                <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Categoria</p>
+                  <p className="mt-1 text-base font-semibold">{jogo.categoria}</p>
+                </div>
+              </div>
+              <div className="mt-4 rounded-lg bg-white/8 p-4 ring-1 ring-white/10">
+                <p className="text-xs font-bold uppercase text-white/65">Nota Média</p>
+                <AvaliacaoEstrelas media={media} total={total} />
+              </div>
+              <div className="mt-4 rounded-lg bg-white/5 p-4 ring-1 ring-white/8">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Descrição</p>
+                <p className="mt-2 text-sm leading-relaxed text-white/80">{jogo.descricao || 'Descrição indisponível.'}</p>
+              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <button type="button" onClick={() => aoAdicionar(jogo)} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 font-bold text-black transition hover:bg-[#aed4ff]">
+                  Adicionar ao carrinho <IconeCarrinho />
+                </button>
+                <button type="button" onClick={() => aoAlternarDesejo(jogo.id)} className={`inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-bold transition ${desejado ? 'border-[#e74c6f] text-[#e74c6f] hover:bg-[#e74c6f]/10' : 'border-white/20 text-white hover:border-[#e74c6f] hover:text-[#e74c6f]'}`}>
+                  <IconeCoracao cheio={desejado} /> {desejado ? 'Na lista' : 'Desejar'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Aba Avaliações */}
+          {aba === 'avaliacoes' && (
+            <div className="mt-4 flex flex-1 flex-col overflow-y-auto" style={{ maxHeight: '420px' }}>
+              {/* Formulário de avaliação */}
+              <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
+                <h3 className="text-sm font-bold text-white">{minhaAvaliacao ? 'Editar sua avaliação' : 'Avaliar este jogo'}</h3>
+                <form onSubmit={handleEnviarAvaliacao} className="mt-3 space-y-3">
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-white/60">Sua nota</label>
+                    <SeletorEstrelas valor={notaForm} onChange={setNotaForm} />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-white/60">Comentário (opcional)</label>
+                    <textarea value={comentarioForm} onChange={(e) => setComentarioForm(e.target.value)} rows={2} placeholder="O que achou do jogo?" className="w-full resize-none rounded-lg bg-white/8 px-3 py-2 text-sm text-white placeholder:text-white/30 ring-1 ring-white/10 focus:outline-none focus:ring-[#398ceb]" />
+                  </div>
+                  {erroAval && <p className="text-xs text-red-400">{erroAval}</p>}
+                  {msgSucesso && <p className="text-xs text-green-400">{msgSucesso}</p>}
+                  <button type="submit" disabled={notaForm < 1 || enviando} className="w-full rounded-full bg-[#398ceb] py-2.5 text-sm font-bold text-white transition hover:bg-[#2a78d4] disabled:opacity-40">
+                    {enviando ? 'Enviando...' : minhaAvaliacao ? 'Atualizar Avaliação' : 'Enviar Avaliação'}
+                  </button>
+                </form>
+              </div>
+
+              {/* Média */}
+              <div className="mt-4 flex items-center gap-4 rounded-lg bg-white/5 p-4 ring-1 ring-white/8">
+                <div className="text-center">
+                  <p className="text-3xl font-black text-[#f59e0b]">{media ? media.toFixed(1) : '—'}</p>
+                  <p className="text-xs text-white/50">{total} {total === 1 ? 'avaliação' : 'avaliações'}</p>
+                </div>
+                <div className="flex-1">
+                  <AvaliacaoEstrelas media={media} total={total} />
+                </div>
+              </div>
+
+              {/* Lista de avaliações */}
+              <div className="mt-4 space-y-3">
+                <h3 className="text-sm font-bold text-white/70">Avaliações anteriores</h3>
+                {carregandoAval && <p className="text-xs text-white/40">Carregando...</p>}
+                {!carregandoAval && avaliacoes.length === 0 && (
+                  <p className="rounded-lg bg-white/5 p-4 text-center text-sm text-white/40">Nenhuma avaliação ainda. Seja o primeiro!</p>
+                )}
+                {avaliacoes.map((av, i) => (
+                  <div key={av.id || i} className="rounded-lg bg-white/5 p-3 ring-1 ring-white/8">
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[0, 1, 2, 3, 4].map((n) => (
+                          <svg key={n} viewBox="0 0 24 24" className={`h-3.5 w-3.5 ${n < av.nota ? 'text-[#f59e0b]' : 'text-white/20'}`} fill="currentColor"><path d="m12 2.8 2.75 5.57 6.15.9-4.45 4.34 1.05 6.12L12 16.84l-5.5 2.89 1.05-6.12L3.1 9.27l6.15-.9L12 2.8Z" /></svg>
+                        ))}
+                      </div>
+                      <span className="text-xs font-bold text-white/60">Usuário #{av.fkUsuario || av.fk_usuario || '?'}</span>
+                    </div>
+                    {av.comentario && <p className="mt-2 text-sm text-white/70">{av.comentario}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
@@ -620,6 +787,7 @@ function ModalDetalhes({ jogo, aoFechar, aoAdicionar }) {
 
 export default function Loja() {
   const { dark: estaTemaEscuro } = useTheme();
+  const { estaDesejado, alternar: alternarDesejo } = useWishlist();
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState(categoriaPadrao);
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todos');
@@ -776,6 +944,8 @@ export default function Loja() {
                     aoSelecionar={setJogoSelecionado}
                     aoAdicionar={adicionarAoCarrinho}
                     estaTemaEscuro={estaTemaEscuro}
+                    desejado={estaDesejado(jogo.id)}
+                    aoAlternarDesejo={alternarDesejo}
                   />
                 ))}
               </motion.div>
@@ -793,7 +963,7 @@ export default function Loja() {
         </div>
       </section>
 
-      <ModalDetalhes jogo={jogoSelecionado} aoFechar={() => setJogoSelecionado(null)} aoAdicionar={adicionarAoCarrinho} />
+      <ModalDetalhes jogo={jogoSelecionado} aoFechar={() => setJogoSelecionado(null)} aoAdicionar={adicionarAoCarrinho} desejado={jogoSelecionado ? estaDesejado(jogoSelecionado.id) : false} aoAlternarDesejo={alternarDesejo} />
     </main>
   );
 }

@@ -36,8 +36,10 @@ export default function Entrar() {
     <div className="max-w-md mx-auto w-full pt-8">
       <div className="bg-surface-container border border-outline-variant rounded-2xl p-6 md:p-8">
         <div className="text-center mb-6">
-          <Logo className="h-10 mx-auto mb-3" />
-          <h1 className="text-2xl font-bold text-on-surface">NEXUS</h1>
+          <Link to="/loja" className="block">
+            <Logo className="h-10 mx-auto mb-3" />
+            <h1 className="text-2xl font-bold text-on-surface">NEXUS</h1>
+          </Link>
           <p className="text-on-surface-variant mt-1 text-sm">Entre na sua biblioteca e loja.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">

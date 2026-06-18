@@ -6,6 +6,7 @@ import NavbarLoja from '../componentes/NavbarLoja.jsx';
 import useTheme from '../hooks/useTheme.js';
 import useWishlist from '../hooks/useWishlist.js';
 import useCarrinho from '../hooks/useCarrinho.js';
+import useToastContext from '../hooks/useToastContext.js';
 import api from '../servicos/api.js';
 
 const categoriaPadrao = ['Todos'];
@@ -258,6 +259,7 @@ export default function Loja() {
   const { dark: estaTemaEscuro } = useTheme();
   const { estaDesejado, alternar: alternarDesejo } = useWishlist();
   const { quantidade: quantidadeCarrinho, erro: erroCarrinho, adicionar } = useCarrinho();
+  const mostrarToast = useToastContext();
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState(categoriaPadrao);
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todos');
@@ -318,8 +320,12 @@ export default function Loja() {
   }, [busca, categoriaAtiva, jogos]);
 
   const adicionarAoCarrinho = useCallback(async (jogo) => {
-    await adicionar(jogo.id);
-  }, [adicionar]);
+    const ok = await adicionar(jogo.id);
+    mostrarToast(
+      ok ? `${jogo.nome} foi adicionado ao carrinho.` : 'Não foi possível adicionar ao carrinho.',
+      ok ? 'sucesso' : 'erro',
+    );
+  }, [adicionar, mostrarToast]);
 
   return (
     <main className={`min-h-screen overflow-hidden ${estaTemaEscuro ? 'bg-black text-white' : 'bg-white text-black'}`}>

@@ -49,20 +49,46 @@ export default function useCarrinho() {
 
   const adicionar = useCallback(
     async (jogoId) => {
-      if (!estaAutenticado || !jogoId) return;
+      if (!estaAutenticado || !jogoId) return false;
       setErro(null);
       try {
         const resposta = await api.post('/carrinho/add', { jogoId });
         setItens(normalizarItensCarrinho(resposta.data));
+        return true;
       } catch (erroCapturado) {
         setErro(
           erroCapturado.response?.data?.message ||
             'Não foi possível adicionar o jogo ao carrinho.',
         );
+        return false;
       }
     },
     [estaAutenticado],
   );
 
-  return { itens, carregando, erro, quantidade, adicionar, carregarCarrinho };
+  const remover = useCallback(
+    async (jogoId) => {
+      if (!estaAutenticado || !jogoId) return false;
+      setErro(null);
+      try {
+        const resposta = await api.post('/carrinho/remove', { jogoId });
+        setItens(normalizarItensCarrinho(resposta.data));
+        return true;
+      } catch (erroCapturado) {
+        setErro(
+          erroCapturado.response?.data?.message ||
+            'Não foi possível remover o item do carrinho.',
+        );
+        return false;
+      }
+    },
+    [estaAutenticado],
+  );
+
+  const finalizar = useCallback(async () => {
+    await api.post('/carrinho/finalizar');
+    setItens([]);
+  }, []);
+
+  return { itens, carregando, erro, quantidade, adicionar, remover, finalizar, carregarCarrinho };
 }

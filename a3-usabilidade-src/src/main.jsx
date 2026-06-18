@@ -8,16 +8,23 @@ import LayoutApp from './layouts/LayoutApp.jsx';
 import RotaProtegida from './componentes/RotaProtegida.jsx';
 import RotaPublica from './componentes/RotaPublica.jsx';
 import ThemeToggleGlobal from './componentes/ThemeToggleGlobal.jsx';
+import ProvedorToast from './componentes/ProvedorToast.jsx';
 import Cadastro from './paginas/auth/Cadastro.jsx';
 import Entrar from './paginas/auth/Entrar.jsx';
+import RecuperarSenha from './paginas/auth/RecuperarSenha.jsx';
+import RedefinirSenha from './paginas/auth/RedefinirSenha.jsx';
 import Inicio from './paginas/Inicio.jsx';
 import Loja from './paginas/Loja.jsx';
+import Checkout from './paginas/Checkout.jsx';
 import Perfil from './paginas/Perfil.jsx';
 import Wishlist from './paginas/Wishlist.jsx';
 import Biblioteca from './paginas/Biblioteca.jsx';
+import Pedidos from './paginas/Pedidos.jsx';
 import Dashboard from './paginas/admin/Dashboard.jsx';
 import GerenciarJogos from './paginas/admin/GerenciarJogos.jsx';
 import GerenciarEmpresas from './paginas/admin/GerenciarEmpresas.jsx';
+import GerenciarCategorias from './paginas/admin/GerenciarCategorias.jsx';
+import GerenciarUsuarios from './paginas/admin/GerenciarUsuarios.jsx';
 
 if (typeof window !== 'undefined') {
   const temaSalvo = window.localStorage.getItem('theme');
@@ -27,7 +34,7 @@ if (typeof window !== 'undefined') {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <>
+      <ProvedorToast>
         <Routes>
           <Route path="/" element={<Inicio />} />
 
@@ -35,14 +42,17 @@ createRoot(document.getElementById('root')).render(
             <Route element={<LayoutAuth />}>
               <Route path="/entrar" element={<Entrar />} />
               <Route path="/cadastro" element={<Cadastro />} />
+              <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+              <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             </Route>
           </Route>
 
           <Route element={<LayoutApp />}>
             <Route element={<RotaProtegida />}>
               <Route path="/loja" element={<Loja />} />
-              <Route path="/checkout" element={<p className="p-8 text-white">Em breve - Checkout</p>} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/biblioteca" element={<Biblioteca />} />
+              <Route path="/pedidos" element={<Pedidos />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/perfil" element={<Perfil />} />
             </Route>
@@ -52,6 +62,8 @@ createRoot(document.getElementById('root')).render(
                 <Route index element={<Dashboard />} />
                 <Route path="jogos" element={<GerenciarJogos />} />
                 <Route path="empresas" element={<GerenciarEmpresas />} />
+                <Route path="categorias" element={<GerenciarCategorias />} />
+                <Route path="usuarios" element={<GerenciarUsuarios />} />
               </Route>
             </Route>
           </Route>
@@ -59,7 +71,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <ThemeToggleGlobal />
-      </>
+      </ProvedorToast>
     </BrowserRouter>
   </StrictMode>,
 );

@@ -77,7 +77,8 @@ export default function Biblioteca() {
     async function carregar() {
       setCarregando(true);
       try {
-        const { data } = await api.get('/jogos');
+        // A biblioteca traz apenas os jogos que o usuário já comprou.
+        const { data } = await api.get('/biblioteca');
         const lista = Array.isArray(data) ? data : Array.isArray(data?.value) ? data.value : [];
         setJogos(lista.map(normalizarJogo));
       } catch {
@@ -120,7 +121,7 @@ export default function Biblioteca() {
             </Link>
             <div>
               <h1 className="text-3xl font-black tracking-tight">Biblioteca</h1>
-              <p className={`text-sm ${textoSecundario}`}>{jogos.length} jogos disponíveis</p>
+              <p className={`text-sm ${textoSecundario}`}>{jogos.length} {jogos.length === 1 ? 'jogo' : 'jogos'} na sua biblioteca</p>
             </div>
           </div>
           <label className={`flex h-11 items-center gap-2 rounded-full px-4 ring-1 focus-within:ring-2 focus-within:ring-[#398ceb] ${buscaBg}`}>
@@ -202,11 +203,19 @@ export default function Biblioteca() {
         {!carregando && jogosFiltrados.length === 0 && (
           <div className="mt-20 flex flex-col items-center gap-3 text-center">
             <h2 className={`text-2xl font-bold ${textoPrincipal}`}>
-              {busca ? 'Nenhum jogo encontrado' : 'Biblioteca vazia'}
+              {busca ? 'Nenhum jogo encontrado' : 'Sua biblioteca está vazia'}
             </h2>
             <p className={textoSecundario}>
-              {busca ? 'Tente outro termo de busca.' : 'Explore a loja para encontrar novos jogos.'}
+              {busca ? 'Tente outro termo de busca.' : 'Você ainda não comprou nenhum jogo. Explore a loja para começar a sua coleção.'}
             </p>
+            {!busca && (
+              <Link
+                to="/loja"
+                className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#398ceb] px-6 py-3 font-bold text-white transition hover:bg-[#2a78d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb]"
+              >
+                Explorar Loja
+              </Link>
+            )}
           </div>
         )}
       </div>

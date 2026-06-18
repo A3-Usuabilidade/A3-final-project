@@ -40,6 +40,7 @@ export default function useAuth() {
       const { token } = resposta.data;
       const storage = lembrar ? localStorage : sessionStorage;
       storage.setItem('token', token);
+      (lembrar ? sessionStorage : localStorage).removeItem('token');
       const payload = decodificarToken(token);
       const usuarioLogado = { id: payload.id, nome: payload.nome, perfil: payload.perfil };
       setUsuario(usuarioLogado);

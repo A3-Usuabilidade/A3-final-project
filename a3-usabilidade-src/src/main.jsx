@@ -6,6 +6,7 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 import LayoutAuth from './layouts/LayoutAuth.jsx';
 import LayoutApp from './layouts/LayoutApp.jsx';
 import RotaProtegida from './componentes/RotaProtegida.jsx';
+import RotaPublica from './componentes/RotaPublica.jsx';
 import ThemeToggleGlobal from './componentes/ThemeToggleGlobal.jsx';
 import Cadastro from './paginas/auth/Cadastro.jsx';
 import Entrar from './paginas/auth/Entrar.jsx';
@@ -28,9 +29,11 @@ createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/" element={<Inicio />} />
 
-          <Route element={<LayoutAuth />}>
-            <Route path="/entrar" element={<Entrar />} />
-            <Route path="/cadastro" element={<Cadastro />} />
+          <Route element={<RotaPublica />}>
+            <Route element={<LayoutAuth />}>
+              <Route path="/entrar" element={<Entrar />} />
+              <Route path="/cadastro" element={<Cadastro />} />
+            </Route>
           </Route>
 
           <Route element={<LayoutApp />}>

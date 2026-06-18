@@ -11,6 +11,8 @@ import ThemeToggleGlobal from './componentes/ThemeToggleGlobal.jsx';
 import ProvedorToast from './componentes/ProvedorToast.jsx';
 import Cadastro from './paginas/auth/Cadastro.jsx';
 import Entrar from './paginas/auth/Entrar.jsx';
+import RecuperarSenha from './paginas/auth/RecuperarSenha.jsx';
+import RedefinirSenha from './paginas/auth/RedefinirSenha.jsx';
 import Inicio from './paginas/Inicio.jsx';
 import Loja from './paginas/Loja.jsx';
 import Checkout from './paginas/Checkout.jsx';
@@ -40,6 +42,8 @@ createRoot(document.getElementById('root')).render(
             <Route element={<LayoutAuth />}>
               <Route path="/entrar" element={<Entrar />} />
               <Route path="/cadastro" element={<Cadastro />} />
+              <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+              <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             </Route>
           </Route>
 

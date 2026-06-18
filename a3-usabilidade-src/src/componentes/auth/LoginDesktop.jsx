@@ -87,15 +87,20 @@ export default function LoginDesktop({
             </p>
           </div>
 
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-on-surface-variant">
-            <input
-              type="checkbox"
-              checked={lembrar}
-              onChange={(e) => onLembrarChange(e.target.checked)}
-              className="h-4 w-4 rounded border border-slate-400 bg-slate-300/70 accent-[#398CEB]"
-            />
-            Lembre-se de mim
-          </label>
+          <div className="flex items-center justify-between gap-4">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-on-surface-variant">
+              <input
+                type="checkbox"
+                checked={lembrar}
+                onChange={(e) => onLembrarChange(e.target.checked)}
+                className="h-4 w-4 rounded border border-slate-400 bg-slate-300/70 accent-[#398CEB]"
+              />
+              Lembre-se de mim
+            </label>
+            <Link to="/recuperar-senha" className="text-sm font-semibold text-primary transition hover:opacity-80">
+              Esqueci minha senha
+            </Link>
+          </div>
 
           <div className="flex items-center gap-2">
             <button

@@ -26,6 +26,24 @@ export const esquemaLogin = z.object({
 });
 
 // ===========================================
+// Recuperação de senha
+// ===========================================
+
+export const esquemaRecuperarSenha = z.object({
+  email: esquemaEmail,
+});
+
+export const esquemaRedefinirSenha = z
+  .object({
+    senha: esquemaSenha,
+    confirmarSenha: z.string(),
+  })
+  .refine((dados) => dados.senha === dados.confirmarSenha, {
+    message: 'As senhas não conferem',
+    path: ['confirmarSenha'],
+  });
+
+// ===========================================
 // Cadastro
 // ===========================================
 

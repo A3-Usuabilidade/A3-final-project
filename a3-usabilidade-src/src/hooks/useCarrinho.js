@@ -1,12 +1,14 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import api from '../servicos/api.js';
 import useAuth from './useAuth.js';
 
 function normalizarItensCarrinho(data) {
   let itensList = [];
+
   if (Array.isArray(data?.carrinho?.itens)) itensList = data.carrinho.itens;
   else if (Array.isArray(data?.itens)) itensList = data.itens;
   else if (Array.isArray(data?.value?.itens)) itensList = data.value.itens;
+
   return itensList.map((item) => ({
     id: item.fkJogo || item.jogoId || item.id,
     quantidade: item.quantidade || 1,
@@ -21,8 +23,10 @@ export default function useCarrinho() {
 
   const carregarCarrinho = useCallback(async () => {
     if (!estaAutenticado) return;
+
     setCarregando(true);
     setErro(null);
+
     try {
       const resposta = await api.get('/carrinho/ativo');
       setItens(normalizarItensCarrinho(resposta.data));
@@ -39,6 +43,7 @@ export default function useCarrinho() {
       setItens([]);
       return;
     }
+
     carregarCarrinho();
   }, [estaAutenticado, carregarCarrinho]);
 
@@ -50,7 +55,9 @@ export default function useCarrinho() {
   const adicionar = useCallback(
     async (jogoId) => {
       if (!estaAutenticado || !jogoId) return false;
+
       setErro(null);
+
       try {
         const resposta = await api.post('/carrinho/add', { jogoId });
         setItens(normalizarItensCarrinho(resposta.data));
@@ -58,7 +65,7 @@ export default function useCarrinho() {
       } catch (erroCapturado) {
         setErro(
           erroCapturado.response?.data?.message ||
-            'Não foi possível adicionar o jogo ao carrinho.',
+            'Nao foi possivel adicionar o jogo ao carrinho.',
         );
         return false;
       }
@@ -69,26 +76,48 @@ export default function useCarrinho() {
   const remover = useCallback(
     async (jogoId) => {
       if (!estaAutenticado || !jogoId) return false;
+
       setErro(null);
+
       try {
-        const resposta = await api.post('/carrinho/remove', { jogoId });
-        setItens(normalizarItensCarrinho(resposta.data));
+        await api.delete(`/carrinho/${jogoId}`);
+        await carregarCarrinho();
         return true;
       } catch (erroCapturado) {
         setErro(
           erroCapturado.response?.data?.message ||
-            'Não foi possível remover o item do carrinho.',
+            'Nao foi possivel remover o item do carrinho.',
         );
         return false;
       }
     },
-    [estaAutenticado],
+    [carregarCarrinho, estaAutenticado],
   );
 
   const finalizar = useCallback(async () => {
-    await api.post('/carrinho/finalizar');
-    setItens([]);
+    setErro(null);
+
+    try {
+      const resposta = await api.post('/vendas/checkout');
+      setItens([]);
+      return resposta.data;
+    } catch (erroCapturado) {
+      setErro(
+        erroCapturado.response?.data?.message ||
+          'Nao foi possivel finalizar a compra.',
+      );
+      throw erroCapturado;
+    }
   }, []);
 
-  return { itens, carregando, erro, quantidade, adicionar, remover, finalizar, carregarCarrinho };
+  return {
+    itens,
+    carregando,
+    erro,
+    quantidade,
+    adicionar,
+    remover,
+    finalizar,
+    carregarCarrinho,
+  };
 }

@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '../componentes/Logo.jsx';
 import useTheme from '../hooks/useTheme.js';
+import useAvaliacoes from '../hooks/useAvaliacoes.js';
+import useWishlist from '../hooks/useWishlist.js';
 import api from '../servicos/api.js';
 
 const categoriaPadrao = ['Todos'];
@@ -483,7 +485,7 @@ function CategoriasLoja({ categorias, categoriaAtiva, setCategoriaAtiva, filtroM
   );
 }
 
-function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
+function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, ehFavorito, aoToggleFavorito }) {
   const cardClasse = estaTemaEscuro
     ? 'bg-black ring-[#aed4ff]/18 shadow-[0_20px_42px_rgba(57,140,235,0.12)] hover:ring-[#398ceb]/60'
     : 'bg-white ring-black/10 shadow-[0_20px_42px_rgba(57,140,235,0.12)] hover:ring-[#398ceb]/52';
@@ -495,13 +497,6 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
     ? 'bg-white text-black hover:bg-[#aed4ff]'
     : 'bg-black text-white hover:bg-[#398ceb] hover:text-black';
 
-  function abrirDetalhesComTeclado(event) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      aoSelecionar(jogo);
-    }
-  }
-
   return (
     <motion.article
       layout
@@ -509,9 +504,19 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
       role="button"
       tabIndex={0}
       onClick={() => aoSelecionar(jogo)}
-      onKeyDown={abrirDetalhesComTeclado}
-      className={`group flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-lg ring-1 transition duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#398ceb] sm:min-h-[372px] ${cardClasse}`}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); aoSelecionar(jogo); } }}
+      className={`group relative flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-lg ring-1 transition duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#398ceb] sm:min-h-[372px] ${cardClasse}`}
     >
+      {aoToggleFavorito && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); aoToggleFavorito(jogo); }}
+          aria-label={ehFavorito ? `Remover ${jogo.nome} dos favoritos` : `Adicionar ${jogo.nome} aos favoritos`}
+          className="absolute right-2 top-2 z-10 grid h-9 w-9 place-items-center rounded-full bg-black/50 backdrop-blur-sm transition hover:scale-110 hover:bg-black/70"
+        >
+          <svg viewBox="0 0 24 24" className={`h-5 w-5 transition ${ehFavorito ? 'fill-red-500 text-red-500' : 'fill-none text-white/80'}`} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+        </button>
+      )}
       <div className="block aspect-[4/3.18] w-full shrink-0 overflow-hidden text-left sm:aspect-[4/3.28]">
         <CapaJogo jogo={jogo} className="transition duration-300 group-hover:scale-105" />
       </div>
@@ -524,10 +529,7 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
         </div>
         <button
           type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            aoAdicionar(jogo);
-          }}
+          onClick={(e) => { e.stopPropagation(); aoAdicionar(jogo); }}
           aria-label={`Adicionar ${jogo.nome} ao carrinho`}
           title="Adicionar ao carrinho"
           className={`grid h-10 w-10 self-end place-items-center rounded-full shadow-lg transition hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb] sm:h-12 sm:w-12 ${botaoCarrinhoClasse}`}
@@ -539,87 +541,128 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro }) {
   );
 }
 
-function ModalDetalhes({ jogo, aoFechar, aoAdicionar }) {
-  useEffect(() => {
-    function fecharComEsc(event) {
-      if (event.key === 'Escape') aoFechar();
-    }
 
+function ModalDetalhes({ jogo, aoFechar, aoAdicionar, ehFavorito, aoToggleFavorito }) {
+  const { avaliacoes, resumo, buscarAvaliacoes, criarAvaliacao, editarAvaliacao } = useAvaliacoes();
+  const [abaAtiva, setAbaAtiva] = useState('detalhes');
+  const [nota, setNota] = useState(5);
+  const [comentario, setComentario] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [msgSucesso, setMsgSucesso] = useState('');
+
+  useEffect(() => {
+    function fecharComEsc(event) { if (event.key === 'Escape') aoFechar(); }
     window.addEventListener('keydown', fecharComEsc);
     return () => window.removeEventListener('keydown', fecharComEsc);
   }, [aoFechar]);
 
+  useEffect(() => {
+    if (jogo?.id) { buscarAvaliacoes(jogo.id); setAbaAtiva('detalhes'); setMsgSucesso(''); }
+  }, [jogo?.id, buscarAvaliacoes]);
+
+  const enviarAvaliacao = async () => {
+    if (!jogo?.id) return;
+    setEnviando(true); setMsgSucesso('');
+    try {
+      await criarAvaliacao(jogo.id, nota, comentario);
+      setComentario(''); setNota(5); setMsgSucesso('Avaliação enviada!');
+      buscarAvaliacoes(jogo.id);
+    } catch {
+      try { await editarAvaliacao(jogo.id, nota, comentario); setComentario(''); setNota(5); setMsgSucesso('Avaliação atualizada!'); buscarAvaliacoes(jogo.id); } catch { setMsgSucesso('Erro ao enviar avaliação.'); }
+    } finally { setEnviando(false); }
+  };
+
   if (!jogo) return null;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="titulo-detalhe-jogo">
-      <button type="button" className="absolute inset-0 cursor-default" aria-label="Fechar modal" onClick={aoFechar} />
-      <section className="relative grid w-full max-w-4xl gap-6 rounded-lg bg-black p-4 text-white shadow-2xl ring-1 ring-white/10 md:grid-cols-[0.95fr_1.05fr]">
-        <button
-          type="button"
-          onClick={aoFechar}
-          aria-label="Fechar detalhes"
-          className="absolute right-4 top-4 rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#398ceb]"
-        >
-          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
+      <button type="button" className="absolute inset-0 cursor-default" aria-label="Fechar" onClick={aoFechar} />
+      <section className="relative w-full max-w-4xl rounded-lg bg-black p-4 text-white shadow-2xl ring-1 ring-white/10 max-h-[90vh] overflow-y-auto">
+        <button type="button" onClick={aoFechar} aria-label="Fechar" className="absolute right-4 top-4 z-20 rounded-full p-2 text-white/80 transition hover:bg-white/10">
+          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12" /></svg>
         </button>
-        <div className="overflow-hidden rounded-lg">
-          <CapaJogo jogo={jogo} className="aspect-[4/5] md:aspect-[4/4.7]" />
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-4">
+          <button onClick={() => setAbaAtiva('detalhes')} className={`px-4 py-2 rounded-full text-sm font-semibold transition ${abaAtiva === 'detalhes' ? 'bg-white text-black' : 'bg-white/10 text-white/70 hover:bg-white/20'}`}>Detalhes</button>
+          <button onClick={() => setAbaAtiva('avaliacoes')} className={`px-4 py-2 rounded-full text-sm font-semibold transition ${abaAtiva === 'avaliacoes' ? 'bg-white text-black' : 'bg-white/10 text-white/70 hover:bg-white/20'}`}>Avaliações ({resumo.total})</button>
         </div>
-        <div className="flex min-w-0 flex-col justify-center pr-2 md:pr-10">
-          <p className="text-sm font-semibold text-[#398ceb]">{jogo.categoria} - {jogo.empresa}</p>
-          <h2 id="titulo-detalhe-jogo" className="mt-2 text-3xl font-black leading-none md:text-4xl">{jogo.nome}</h2>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Ano</p>
-              <p className="mt-1 text-lg font-semibold text-white">{jogo.ano || 'Nao informado'}</p>
-            </div>
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Preco</p>
-              <p className="mt-1 text-lg font-semibold text-white">{formatarMoeda(jogo.preco)}</p>
-            </div>
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Empresa</p>
-              <p className="mt-1 text-base font-semibold text-white">{jogo.empresa}</p>
-            </div>
-            <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Categoria</p>
-              <p className="mt-1 text-base font-semibold text-white">{jogo.categoria}</p>
+
+        {abaAtiva === 'detalhes' ? (
+          <div className="grid gap-6 md:grid-cols-[0.95fr_1.05fr]">
+            <div className="overflow-hidden rounded-lg"><CapaJogo jogo={jogo} className="aspect-[4/5] md:aspect-[4/4.7]" /></div>
+            <div className="flex min-w-0 flex-col justify-center pr-2 md:pr-10">
+              <p className="text-sm font-semibold text-[#398ceb]">{jogo.categoria} - {jogo.empresa}</p>
+              <h2 className="mt-2 text-3xl font-black leading-none md:text-4xl">{jogo.nome}</h2>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10"><p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Ano</p><p className="mt-1 text-lg font-semibold">{jogo.ano || 'N/A'}</p></div>
+                <div className="rounded-lg bg-white/7 p-4 ring-1 ring-white/10"><p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Preço</p><p className="mt-1 text-lg font-semibold">{formatarMoeda(jogo.preco)}</p></div>
+              </div>
+              <div className="mt-3 rounded-lg bg-white/7 p-4 ring-1 ring-white/10">
+                <p className="text-xs font-bold uppercase text-white/65">Nota Média</p>
+                <div className="mt-2 flex items-center gap-2">
+                  {[1,2,3,4,5].map(i => <IconeEstrela key={i} ativa={i <= Math.round(resumo.media)} />)}
+                  <span className="ml-2 text-base font-bold">{resumo.media ? Number(resumo.media).toFixed(1) : '—'}</span>
+                  <span className="text-white/50 text-sm">({resumo.total})</span>
+                </div>
+              </div>
+              <div className="mt-3 rounded-lg bg-white/5 p-4 ring-1 ring-white/8"><p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Descrição</p><p className="mt-2 text-sm leading-relaxed text-white/80">{jogo.descricao || 'Descrição indisponível.'}</p></div>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <button type="button" onClick={() => aoAdicionar(jogo)} className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 font-bold text-black transition hover:bg-[#aed4ff]"><IconeCarrinho /> Adicionar ao carrinho</button>
+                <button type="button" onClick={() => aoToggleFavorito && aoToggleFavorito(jogo)} className={`inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-bold transition ${ehFavorito ? 'border-red-500 text-red-500 hover:bg-red-500/10' : 'border-white/20 text-white hover:border-[#398ceb] hover:text-[#398ceb]'}`}>
+                  <svg viewBox="0 0 24 24" className={`h-5 w-5 ${ehFavorito ? 'fill-red-500' : 'fill-none'}`} stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                  {ehFavorito ? 'Nos favoritos' : 'Favoritar'}
+                </button>
+              </div>
             </div>
           </div>
-          <div className="mt-5 rounded-lg bg-white/8 p-4 ring-1 ring-white/10">
-            <p className="text-xs font-bold uppercase text-white/65">Nota</p>
-            <AvaliacaoEstrelas />
+        ) : (
+          <div className="space-y-6">
+            {/* Review form */}
+            <div className="rounded-lg bg-white/7 p-5 ring-1 ring-white/10">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-white/60 mb-3">Deixe sua avaliação</h3>
+              <div className="flex items-center gap-1 mb-3">
+                {[1,2,3,4,5].map(i => (
+                  <button key={i} type="button" onClick={() => setNota(i)} className="transition hover:scale-110">
+                    <IconeEstrela ativa={i <= nota} />
+                  </button>
+                ))}
+                <span className="ml-2 text-sm text-white/60">{nota}/5</span>
+              </div>
+              <textarea value={comentario} onChange={e => setComentario(e.target.value)} placeholder="Seu comentário..." rows={3} className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#398ceb] resize-none" />
+              <div className="mt-3 flex items-center gap-3">
+                <button type="button" onClick={enviarAvaliacao} disabled={enviando} className="rounded-full bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-[#aed4ff] disabled:opacity-50">{enviando ? 'Enviando...' : 'Enviar'}</button>
+                {msgSucesso && <span className="text-sm text-[#398ceb]">{msgSucesso}</span>}
+              </div>
+            </div>
+            {/* Reviews list */}
+            {avaliacoes.length === 0 ? (
+              <p className="text-center text-white/50 py-8">Nenhuma avaliação ainda. Seja o primeiro!</p>
+            ) : (
+              <div className="space-y-3">
+                {avaliacoes.map((av, i) => (
+                  <div key={i} className="rounded-lg bg-white/5 p-4 ring-1 ring-white/8">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex">{[1,2,3,4,5].map(s => <IconeEstrela key={s} ativa={s <= av.nota} />)}</div>
+                      <span className="text-sm font-bold text-white">{av.nota}/5</span>
+                      {av.usuario?.nome && <span className="text-sm text-white/50">— {av.usuario.nome}</span>}
+                    </div>
+                    {av.comentario && <p className="text-sm text-white/80">{av.comentario}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="mt-5 rounded-lg bg-white/5 p-4 ring-1 ring-white/8">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white/55">Descricao</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/80">{jogo.descricao || 'Descricao indisponivel na API.'}</p>
-          </div>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => aoAdicionar(jogo)}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 font-bold text-black transition hover:bg-[#aed4ff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb]"
-            >
-              Adicionar ao carrinho <IconeCarrinho />
-            </button>
-            <button
-              type="button"
-              className="rounded-full border border-white/20 px-5 py-3 font-bold text-white transition hover:border-[#398ceb] hover:text-[#398ceb] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#398ceb]"
-            >
-              Lista de desejos
-            </button>
-          </div>
-        </div>
+        )}
       </section>
     </div>
   );
 }
 
+
 export default function Loja() {
   const { dark: estaTemaEscuro } = useTheme();
+  const { itens: favoritos, adicionarJogo: addFav, removerJogo: rmFav } = useWishlist();
   const [jogos, setJogos] = useState([]);
   const [categorias, setCategorias] = useState(categoriaPadrao);
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todos');
@@ -631,6 +674,12 @@ export default function Loja() {
   const [itensCarrinho, setItensCarrinho] = useState([]);
   const [menuMobileAberto, setMenuMobileAberto] = useState(false);
   const [filtroMobileAberto, setFiltroMobileAberto] = useState(false);
+
+  const ehFavorito = useCallback((id) => favoritos.some(f => f.id === id), [favoritos]);
+  const toggleFavorito = useCallback(async (jogo) => {
+    if (!jogo.id) return;
+    try { if (ehFavorito(jogo.id)) await rmFav(jogo.id); else await addFav(jogo.id); } catch {}
+  }, [ehFavorito, addFav, rmFav]);
 
   async function carregarDados() {
     setCarregando(true);
@@ -776,6 +825,8 @@ export default function Loja() {
                     aoSelecionar={setJogoSelecionado}
                     aoAdicionar={adicionarAoCarrinho}
                     estaTemaEscuro={estaTemaEscuro}
+                    ehFavorito={ehFavorito(jogo.id)}
+                    aoToggleFavorito={toggleFavorito}
                   />
                 ))}
               </motion.div>
@@ -793,7 +844,7 @@ export default function Loja() {
         </div>
       </section>
 
-      <ModalDetalhes jogo={jogoSelecionado} aoFechar={() => setJogoSelecionado(null)} aoAdicionar={adicionarAoCarrinho} />
+      <ModalDetalhes jogo={jogoSelecionado} aoFechar={() => setJogoSelecionado(null)} aoAdicionar={adicionarAoCarrinho} ehFavorito={jogoSelecionado ? ehFavorito(jogoSelecionado.id) : false} aoToggleFavorito={toggleFavorito} />
     </main>
   );
 }

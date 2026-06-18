@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Library, Key, Copy, Check, ChevronDown, ChevronUp, Star, Package } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Library, Key, Copy, Check, ChevronDown, ChevronUp, Star, Package, Heart } from 'lucide-react';
 import useBiblioteca from '../hooks/useBiblioteca.js';
 import useAvaliacoes from '../hooks/useAvaliacoes.js';
+import useWishlist from '../hooks/useWishlist.js';
 
 function EstrelaInterativa({ nota, setNota, tamanho = 20, desabilitado = false }) {
   const [hover, setHover] = useState(0);
@@ -75,7 +76,7 @@ function BotaoCopiar({ texto }) {
   );
 }
 
-function CardJogoBiblioteca({ venda, jogo, chaves, onAvaliar }) {
+function CardJogoBiblioteca({ venda, jogo, chaves, onAvaliar, ehFavorito, onToggleFavorito }) {
   const [expandido, setExpandido] = useState(false);
 
   const dataCompra = venda?.dataVenda
@@ -157,6 +158,14 @@ function CardJogoBiblioteca({ venda, jogo, chaves, onAvaliar }) {
           className="text-xs font-medium text-primary hover:text-on-surface border border-primary/30 hover:border-primary rounded-lg px-3 py-1.5 transition-all cursor-pointer hover:bg-primary/5"
         >
           Avaliar
+        </button>
+        <button
+          onClick={() => onToggleFavorito && onToggleFavorito(jogo)}
+          className="p-1.5 rounded-lg transition-all cursor-pointer hover:bg-surface-container-high"
+          aria-label={ehFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          title={ehFavorito ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+        >
+          <Heart size={16} className={`transition ${ehFavorito ? 'fill-red-500 text-red-500' : 'text-on-surface-variant'}`} />
         </button>
       </div>
     </article>
@@ -242,8 +251,16 @@ function ModalAvaliacao({ jogo, onFechar, onSalvar }) {
 export default function Biblioteca() {
   const { compras, carregando, erro } = useBiblioteca();
   const { criarAvaliacao } = useAvaliacoes();
+  const { itens: favoritos, adicionarJogo: addFav, removerJogo: rmFav } = useWishlist();
   const [jogoAvaliar, setJogoAvaliar] = useState(null);
   const [filtro, setFiltro] = useState('');
+
+  const ehFavorito = useCallback((id) => favoritos.some(f => f.id === id), [favoritos]);
+  const toggleFavorito = useCallback(async (jogo) => {
+    const id = jogo?.id || jogo?.jogoId;
+    if (!id) return;
+    try { if (ehFavorito(id)) await rmFav(id); else await addFav(id); } catch {}
+  }, [ehFavorito, addFav, rmFav]);
 
   // Normalizar os dados de compras em uma lista plana de jogos
   const jogosComprados = (compras || []).flatMap((compra) => {
@@ -335,6 +352,8 @@ export default function Biblioteca() {
                 jogo={item.jogo}
                 chaves={item.chaves}
                 onAvaliar={setJogoAvaliar}
+                ehFavorito={ehFavorito(item.jogo?.id || item.jogo?.jogoId)}
+                onToggleFavorito={toggleFavorito}
               />
             ))}
           </div>

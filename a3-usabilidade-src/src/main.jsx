@@ -39,7 +39,6 @@ createRoot(document.getElementById('root')).render(
             <Route path="/loja" element={<Loja />} />
             <Route path="/checkout" element={<p className="p-8 text-white">Em breve - Checkout</p>} />
             <Route path="/biblioteca" element={<Biblioteca />} />
-            <Route path="/avaliacoes" element={<Avaliacoes />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/perfil" element={<Perfil />} />
           </Route>

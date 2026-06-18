@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Trash2, ShoppingCart, Search, HeartOff } from 'lucide-react';
+import { Heart, ShoppingCart, Search, HeartOff } from 'lucide-react';
 import useWishlist from '../hooks/useWishlist.js';
 
 export default function Wishlist() {
@@ -155,10 +155,10 @@ export default function Wishlist() {
                         onClick={() => handleRemover(id)}
                         disabled={removendo === id}
                         title="Remover da lista de desejos"
-                        className="text-on-surface-variant hover:text-error border border-outline-variant hover:border-error/40 rounded-lg p-2.5 transition-all cursor-pointer disabled:opacity-50 hover:bg-error/5"
+                        className="border border-red-500/40 hover:border-red-500 rounded-lg p-2.5 transition-all cursor-pointer disabled:opacity-50 hover:bg-red-500/10 group/heart"
                         aria-label={`Remover ${nome} da lista de desejos`}
                       >
-                        <Trash2 size={16} />
+                        <Heart size={16} className="fill-red-500 text-red-500 transition group-hover/heart:fill-transparent group-hover/heart:text-on-surface-variant" />
                       </button>
                       <button
                         title="Adicionar ao carrinho"

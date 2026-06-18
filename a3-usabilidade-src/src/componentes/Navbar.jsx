@@ -13,7 +13,6 @@ const linksPublicos = [
 const linksAutenticados = [
   { to: '/loja', label: 'Loja', icon: Store },
   { to: '/biblioteca', label: 'Biblioteca', icon: Library },
-  { to: '/avaliacoes', label: 'Avaliações', icon: MessageSquare },
   { to: '/wishlist', label: 'Desejos', icon: Heart },
 ];
 

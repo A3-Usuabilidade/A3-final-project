@@ -53,9 +53,12 @@ export default function AdminLayout() {
       {!menuAberto && (
         <button
           onClick={() => setMenuAberto(true)}
+          aria-label="Abrir menu"
+          aria-expanded={menuAberto}
+          aria-controls="admin-sidebar"
           className="md:hidden fixed top-4 left-4 z-50 bg-surface-container border border-outline-variant rounded-lg p-2"
         >
-          <Menu size={20} className="text-on-surface" />
+          <Menu size={20} className="text-on-surface" aria-hidden="true" />
         </button>
       )}
 
@@ -66,7 +69,7 @@ export default function AdminLayout() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setMenuAberto(false)}
           />
-          <aside className="relative w-64 bg-surface-container-lowest border-r border-outline-variant flex flex-col">
+          <aside id="admin-sidebar" className="relative w-64 bg-surface-container-lowest border-r border-outline-variant flex flex-col">
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-2">
                 <Link to="/loja" className="flex items-center gap-2">
@@ -74,8 +77,8 @@ export default function AdminLayout() {
                   <span className="text-lg font-bold text-on-surface">NEXUS</span>
                 </Link>
               </div>
-              <button onClick={() => setMenuAberto(false)} className="text-on-surface-variant hover:text-on-surface">
-                <X size={20} />
+              <button onClick={() => setMenuAberto(false)} aria-label="Fechar menu" className="text-on-surface-variant hover:text-on-surface">
+                <X size={20} aria-hidden="true" />
               </button>
             </div>
 

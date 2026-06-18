@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import useWishlist from '../hooks/useWishlist.js';
 import useTheme from '../hooks/useTheme.js';
-import Logo from '../componentes/Logo.jsx';
-import { ModalDetalhes } from './Loja.jsx';
-import api from '../servicos/api.js';
+import useCarrinho from '../hooks/useCarrinho.js';
+import ModalDetalhes from '../componentes/ModalDetalhes.jsx';
+
 
 function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -32,16 +32,6 @@ function IconeSetaEsquerda() {
   );
 }
 
-function IconeCarrinho() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    </svg>
-  );
-}
-
 const cardAnimacao = {
   hidden: { opacity: 0, y: 20, scale: 0.97 },
   show: {
@@ -59,16 +49,12 @@ const gridAnimacao = {
 export default function Wishlist() {
   const { dark: estaTemaEscuro } = useTheme();
   const { lista, carregando, remover, estaDesejado, alternar } = useWishlist();
+  const { adicionar } = useCarrinho();
   const [jogoSelecionado, setJogoSelecionado] = useState(null);
 
   async function adicionarAoCarrinho(jogo) {
     if (!jogo.id) return;
-    try {
-      await api.post('/carrinho/add', { jogoId: jogo.id });
-      alert('Jogo adicionado ao carrinho com sucesso!');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao adicionar ao carrinho.');
-    }
+    await adicionar(jogo.id);
   }
 
   const bg = estaTemaEscuro ? 'bg-black' : 'bg-white';
@@ -146,8 +132,8 @@ export default function Wishlist() {
                   {jogo.capa || jogo.imagem ? (
                     <img src={jogo.capa || jogo.imagem} alt={jogo.nome} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,#aed4ff_0,#398ceb_30%,#000_78%)]">
-                      <span className="text-3xl font-black text-white/90">{obterIniciais(jogo.nome)}</span>
+                    <div role="img" aria-label={`Capa do jogo ${jogo.nome}`} className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,#aed4ff_0,#398ceb_30%,#000_78%)]">
+                      <span className="text-3xl font-black text-white/90" aria-hidden="true">{obterIniciais(jogo.nome)}</span>
                     </div>
                   )}
 

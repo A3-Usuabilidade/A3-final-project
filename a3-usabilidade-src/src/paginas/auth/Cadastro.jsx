@@ -127,9 +127,10 @@ export default function Cadastro() {
               )}
 
               <div>
-                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">Nome Completo</label>
+                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88" htmlFor="nome">Nome Completo</label>
                 <input
                   type="text"
+                  id="nome"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   required
@@ -139,9 +140,10 @@ export default function Cadastro() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">E-mail</label>
+                <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88" htmlFor="email-cadastro">E-mail</label>
                 <input
                   type="email"
+                  id="email-cadastro"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -162,6 +164,7 @@ export default function Cadastro() {
                     onChange={(e) => handleDatePartChange(e.target.value, setDiaNascimento, 2, mesNascimentoRef)}
                     className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Dia"
+                    aria-label="Dia"
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
                   <input
@@ -174,6 +177,7 @@ export default function Cadastro() {
                     onKeyDown={(e) => handleDatePartKeyDown(e, mesNascimento, diaNascimentoRef)}
                     className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder={TEXTO_MES}
+                    aria-label="Mês"
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
                   <input
@@ -186,16 +190,18 @@ export default function Cadastro() {
                     onKeyDown={(e) => handleDatePartKeyDown(e, anoNascimento, mesNascimentoRef)}
                     className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Ano"
+                    aria-label="Ano"
                   />
                 </div>
               </div>
 
               <div className="grid gap-3 md:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">Senha</label>
+                  <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88" htmlFor="senha-cadastro">Senha</label>
                   <div className="relative">
                     <input
                       type={mostrarSenha ? 'text' : 'password'}
+                      id="senha-cadastro"
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
                       required
@@ -211,10 +217,11 @@ export default function Cadastro() {
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">Confirmar Senha</label>
+                  <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88" htmlFor="confirmar-senha">Confirmar Senha</label>
                   <div className="relative">
                     <input
                       type={mostrarConfirmarSenha ? 'text' : 'password'}
+                      id="confirmar-senha"
                       value={confirmarSenha}
                       onChange={(e) => setConfirmarSenha(e.target.value)}
                       required
@@ -239,9 +246,9 @@ export default function Cadastro() {
             </form>
           </div>
 
-          <p className="mt-3 text-center text-[0.95rem] font-medium text-black dark:text-black">
+          <p className="mt-3 text-center text-[0.95rem] font-medium text-on-surface">
             {TEXTO_JA_POSSUI}
-            <Link to="/entrar" className="font-black text-black transition hover:opacity-75 dark:text-black">
+            <Link to="/entrar" className="font-black text-primary transition hover:opacity-75">
               Entrar.
             </Link>
           </p>

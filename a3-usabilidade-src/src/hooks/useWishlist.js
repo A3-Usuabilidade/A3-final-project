@@ -52,11 +52,10 @@ export default function useWishlist() {
   }, [carregarLista]);
 
   const alternar = useCallback(async (jogoId) => {
-    if (idsDesejados.has(jogoId)) {
-      return remover(jogoId);
-    }
-    return adicionar(jogoId);
-  }, [idsDesejados, adicionar, remover]);
+    let deseja = false;
+    setIdsDesejados((prev) => { deseja = prev.has(jogoId); return prev; });
+    return deseja ? remover(jogoId) : adicionar(jogoId);
+  }, [adicionar, remover]);
 
   const estaDesejado = useCallback((jogoId) => {
     return idsDesejados.has(jogoId);

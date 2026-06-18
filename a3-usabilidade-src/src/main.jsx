@@ -12,6 +12,7 @@ import Cadastro from './paginas/auth/Cadastro.jsx';
 import Entrar from './paginas/auth/Entrar.jsx';
 import Inicio from './paginas/Inicio.jsx';
 import Loja from './paginas/Loja.jsx';
+import Checkout from './paginas/Checkout.jsx';
 import Perfil from './paginas/Perfil.jsx';
 import Wishlist from './paginas/Wishlist.jsx';
 import Biblioteca from './paginas/Biblioteca.jsx';
@@ -41,7 +42,7 @@ createRoot(document.getElementById('root')).render(
           <Route element={<LayoutApp />}>
             <Route element={<RotaProtegida />}>
               <Route path="/loja" element={<Loja />} />
-              <Route path="/checkout" element={<p className="p-8 text-white">Em breve - Checkout</p>} />
+              <Route path="/checkout" element={<Checkout />} />
               <Route path="/biblioteca" element={<Biblioteca />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/perfil" element={<Perfil />} />

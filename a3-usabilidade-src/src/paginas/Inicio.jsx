@@ -116,17 +116,17 @@ export default function Inicio() {
         <header className="relative z-20 w-full">
           <div className="mx-auto flex max-w-7xl items-center px-8 py-6 sm:px-12">
 
-            {/* NAV — esquerda, bold azul */}
+            {/* NAV — esquerda */}
             <nav className="flex items-center gap-7 mr-auto" aria-label="Navegação principal">
               <Link
                 to="/loja"
-                className="text-sm font-black uppercase tracking-wider text-[#398CEB] hover:text-[#AED4FF] transition-colors"
+                className="text-sm font-black text-white hover:text-white/70 transition-colors"
               >
                 Jogos
               </Link>
               <Link
                 to="/loja"
-                className="text-sm font-black uppercase tracking-wider text-[#398CEB] hover:text-[#AED4FF] transition-colors"
+                className="text-sm font-black text-white hover:text-white/70 transition-colors"
               >
                 Loja
               </Link>
@@ -138,11 +138,8 @@ export default function Inicio() {
               className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 select-none"
               aria-label="Nexus — página inicial"
             >
-              <Logo className="h-12 w-9 text-white drop-shadow-[0_0_18px_rgba(57,140,235,.6)]" />
-              <span
-                className="text-3xl font-black tracking-[0.04em] text-white"
-                style={{ textShadow: '0 0 28px rgba(57,140,235,.45)' }}
-              >
+              <Logo className="h-12 w-9 text-white" />
+              <span className="text-3xl font-black tracking-[0.04em] text-white">
                 NEXUS
               </span>
             </Link>
@@ -151,13 +148,13 @@ export default function Inicio() {
             <div className="ml-auto flex items-center gap-3">
               <Link
                 to="/entrar"
-                className="inline-flex h-10 items-center rounded-full border border-white/15 bg-white/6 px-5 text-sm font-bold text-white/85 backdrop-blur transition hover:border-[#398CEB]/50 hover:text-white"
+                className="inline-flex h-10 items-center justify-center rounded-full border border-white/15 bg-white/6 px-5 text-sm font-bold text-white/80 backdrop-blur transition hover:border-[#398CEB]/45 hover:text-white"
               >
                 Entrar
               </Link>
               <Link
                 to="/cadastro"
-                className="hidden sm:inline-flex h-10 items-center rounded-full bg-[#398CEB] px-5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(57,140,235,.35)] transition hover:bg-[#4a95ef] active:scale-95"
+                className="hidden sm:inline-flex h-10 items-center justify-center rounded-full bg-[#398CEB] px-5 text-sm font-bold text-white shadow-[0_12px_32px_rgba(57,140,235,.35)] transition hover:bg-[#4a95ef] active:scale-95"
               >
                 Criar conta
               </Link>
@@ -168,15 +165,11 @@ export default function Inicio() {
         {/* ───────────── HERO ───────────── */}
         <main className="relative z-10 flex flex-1 flex-col items-center pt-10 pb-8 px-5">
 
-          {/* badge */}
-          <span className="anim-0 inline-flex items-center rounded-full border border-[#398CEB]/25 bg-[#398CEB]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[.18em] text-[#AED4FF]">
-            Plataforma de jogos digitais
-          </span>
 
           {/* título */}
-          <h1 className="anim-1 mt-5 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-[3.6rem]">
+          <h1 className="anim-0 mt-6 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-[3.6rem]">
             Sua loja e biblioteca
-            <span className="block text-[#398CEB]" style={{ textShadow: '0 0 32px rgba(57,140,235,.4)' }}>
+            <span className="block text-[#398CEB]">
               em um só lugar.
             </span>
           </h1>

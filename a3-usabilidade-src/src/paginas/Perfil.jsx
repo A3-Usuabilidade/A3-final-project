@@ -218,7 +218,7 @@ export default function Perfil() {
                 className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface-variant cursor-not-allowed"
               />
               <p className="text-xs text-on-surface-variant mt-1">
-                O e-mail nÃ£o pode ser alterado
+                O e-mail não pode ser alterado
               </p>
             </div>
 
@@ -279,7 +279,7 @@ export default function Perfil() {
                   disabled={isSubmittingPerfil}
                   className="flex-1 bg-primary text-on-primary font-semibold rounded-lg py-2 transition cursor-pointer hover:brightness-90 disabled:opacity-50"
                 >
-                  {isSubmittingPerfil ? 'Salvando...' : 'Salvar AlteraÃ§Ãµes'}
+                  {isSubmittingPerfil ? 'Salvando...' : 'Salvar Alterações'}
                 </button>
                 <button
                   type="button"

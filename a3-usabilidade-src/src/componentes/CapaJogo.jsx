@@ -10,7 +10,7 @@ function obterIniciais(nome) {
 
 export default function CapaJogo({ jogo, className = '' }) {
   if (jogo.capa) {
-    return <img src={jogo.capa} alt={`Capa do jogo ${jogo.nome}`} className={`h-full w-full object-cover ${className}`} />;
+    return <img src={jogo.capa} alt={`Capa do jogo ${jogo.nome}`} loading="lazy" decoding="async" className={`h-full w-full object-cover ${className}`} />;
   }
 
   return (

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import CapaJogo from '../componentes/CapaJogo.jsx';
 import ModalDetalhes from '../componentes/ModalDetalhes.jsx';
 import NavbarLoja from '../componentes/NavbarLoja.jsx';
@@ -10,36 +10,6 @@ import useToastContext from '../hooks/useToastContext.js';
 import api from '../servicos/api.js';
 
 const categoriaPadrao = ['Todos'];
-
-const gridAnimacao = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.055,
-    },
-  },
-};
-
-const cardAnimacao = {
-  hidden: {
-    opacity: 0,
-    y: 26,
-    scale: 0.96,
-    filter: 'blur(6px)',
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: 'blur(0px)',
-    transition: {
-      type: 'spring',
-      stiffness: 260,
-      damping: 24,
-      mass: 0.8,
-    },
-  },
-};
 
 function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString('pt-BR', {
@@ -224,7 +194,7 @@ function CategoriasLoja({ categorias, categoriaAtiva, setCategoriaAtiva, filtroM
   );
 }
 
-function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, aoAlternarDesejo }) {
+const CardJogo = memo(function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, aoAlternarDesejo }) {
   const cardClasse = estaTemaEscuro
     ? 'bg-black ring-[#aed4ff]/18 shadow-[0_20px_42px_rgba(57,140,235,0.12)] hover:ring-[#398ceb]/60'
     : 'bg-white ring-black/10 shadow-[0_20px_42px_rgba(57,140,235,0.12)] hover:ring-[#398ceb]/52';
@@ -244,9 +214,7 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, a
   }
 
   return (
-    <motion.article
-      layout
-      variants={cardAnimacao}
+    <div
       role="button"
       tabIndex={0}
       onClick={() => aoSelecionar(jogo)}
@@ -254,7 +222,7 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, a
       className={`group flex h-full min-h-[300px] cursor-pointer flex-col overflow-hidden rounded-lg ring-1 transition duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#398ceb] sm:min-h-[372px] ${cardClasse}`}
     >
       <div className="relative block aspect-[4/3.18] w-full shrink-0 overflow-hidden text-left sm:aspect-[4/3.28]">
-        <CapaJogo jogo={jogo} className="transition duration-300 group-hover:scale-105" />
+        <CapaJogo jogo={jogo} />
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); aoAlternarDesejo(jogo.id); }}
@@ -283,9 +251,9 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, a
           <IconeCarrinho tom={estaTemaEscuro ? 'escuro' : 'claro'} />
         </button>
       </div>
-    </motion.article>
+    </div>
   );
-}
+});
 
 export default function Loja() {
   const { dark: estaTemaEscuro } = useTheme();
@@ -351,13 +319,13 @@ export default function Loja() {
     });
   }, [busca, categoriaAtiva, jogos]);
 
-  async function adicionarAoCarrinho(jogo) {
+  const adicionarAoCarrinho = useCallback(async (jogo) => {
     const ok = await adicionar(jogo.id);
     mostrarToast(
       ok ? `${jogo.nome} foi adicionado ao carrinho.` : 'Não foi possível adicionar ao carrinho.',
       ok ? 'sucesso' : 'erro',
     );
-  }
+  }, [adicionar, mostrarToast]);
 
   return (
     <main className={`min-h-screen overflow-hidden ${estaTemaEscuro ? 'bg-black text-white' : 'bg-white text-black'}`}>
@@ -419,25 +387,28 @@ export default function Loja() {
                 </div>
               </>
             ) : jogosFiltrados.length ? (
-              <motion.div
-                key={`catalogo-${categoriaAtiva}-${busca}`}
-                variants={gridAnimacao}
-                initial="hidden"
-                animate="show"
-                className="mt-10 grid grid-cols-2 gap-3 sm:mt-16 sm:grid-cols-2 sm:gap-7 xl:grid-cols-4"
-              >
-                {jogosFiltrados.map((jogo) => (
-                  <CardJogo
-                    key={jogo.id || jogo.nome}
-                    jogo={jogo}
-                    aoSelecionar={setJogoSelecionado}
-                    aoAdicionar={adicionarAoCarrinho}
-                    estaTemaEscuro={estaTemaEscuro}
-                    desejado={estaDesejado(jogo.id)}
-                    aoAlternarDesejo={alternarDesejo}
-                  />
-                ))}
-              </motion.div>
+              <div className="mt-10 grid grid-cols-2 gap-3 sm:mt-16 sm:grid-cols-2 sm:gap-7 xl:grid-cols-4">
+                <AnimatePresence mode="popLayout">
+                  {jogosFiltrados.map((jogo) => (
+                    <motion.div
+                      key={jogo.id || jogo.nome}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <CardJogo
+                        jogo={jogo}
+                        aoSelecionar={setJogoSelecionado}
+                        aoAdicionar={adicionarAoCarrinho}
+                        estaTemaEscuro={estaTemaEscuro}
+                        desejado={estaDesejado(jogo.id)}
+                        aoAlternarDesejo={alternarDesejo}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
             ) : (
               <div className={`mt-16 rounded-lg p-10 text-center ${
                 estaTemaEscuro

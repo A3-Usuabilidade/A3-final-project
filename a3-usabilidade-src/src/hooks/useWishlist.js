@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../servicos/api.js';
 
 export default function useWishlist() {
@@ -36,7 +36,10 @@ export default function useWishlist() {
       await carregarLista();
       return true;
     } catch (err) {
-      if (err.response?.status === 409) return false;
+      if (err.response?.status === 409) {
+        await carregarLista();
+        return false;
+      }
       throw err;
     }
   }, [carregarLista]);
@@ -51,10 +54,17 @@ export default function useWishlist() {
     }
   }, [carregarLista]);
 
+  const idsDesejadosRef = useRef(idsDesejados);
+
+  useEffect(() => {
+    idsDesejadosRef.current = idsDesejados;
+  }, [idsDesejados]);
+
   const alternar = useCallback(async (jogoId) => {
-    let deseja = false;
-    setIdsDesejados((prev) => { deseja = prev.has(jogoId); return prev; });
-    return deseja ? remover(jogoId) : adicionar(jogoId);
+    if (idsDesejadosRef.current.has(jogoId)) {
+      return remover(jogoId);
+    }
+    return adicionar(jogoId);
   }, [adicionar, remover]);
 
   const estaDesejado = useCallback((jogoId) => {

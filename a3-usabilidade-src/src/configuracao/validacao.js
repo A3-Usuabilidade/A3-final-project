@@ -158,3 +158,11 @@ export const esquemaJogo = z.object({
 export const esquemaEmpresa = z.object({
   nome: z.string().trim().min(1, 'Nome da empresa é obrigatório'),
 });
+
+// ===========================================
+// Categoria
+// ===========================================
+
+export const esquemaCategoria = z.object({
+  nome: z.string().trim().min(1, 'Nome da categoria é obrigatório'),
+});

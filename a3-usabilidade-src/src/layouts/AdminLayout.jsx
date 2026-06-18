@@ -8,6 +8,8 @@ const LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
   { to: '/admin/jogos', label: 'Jogos' },
   { to: '/admin/empresas', label: 'Empresas' },
+  { to: '/admin/categorias', label: 'Categorias' },
+  { to: '/admin/usuarios', label: 'Usuários' },
 ];
 
 export default function AdminLayout() {

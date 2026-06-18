@@ -18,6 +18,8 @@ import Biblioteca from './paginas/Biblioteca.jsx';
 import Dashboard from './paginas/admin/Dashboard.jsx';
 import GerenciarJogos from './paginas/admin/GerenciarJogos.jsx';
 import GerenciarEmpresas from './paginas/admin/GerenciarEmpresas.jsx';
+import GerenciarCategorias from './paginas/admin/GerenciarCategorias.jsx';
+import GerenciarUsuarios from './paginas/admin/GerenciarUsuarios.jsx';
 
 if (typeof window !== 'undefined') {
   const temaSalvo = window.localStorage.getItem('theme');
@@ -52,6 +54,8 @@ createRoot(document.getElementById('root')).render(
                 <Route index element={<Dashboard />} />
                 <Route path="jogos" element={<GerenciarJogos />} />
                 <Route path="empresas" element={<GerenciarEmpresas />} />
+                <Route path="categorias" element={<GerenciarCategorias />} />
+                <Route path="usuarios" element={<GerenciarUsuarios />} />
               </Route>
             </Route>
           </Route>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import Logo from '../componentes/Logo.jsx';
 import BotaoSair from '../componentes/BotaoSair.jsx';
@@ -19,8 +19,10 @@ export default function AdminLayout() {
       {/* Sidebar desktop */}
       <aside className="hidden md:flex md:w-56 lg:w-64 flex-col bg-surface-container-lowest border-r border-outline-variant">
         <div className="p-6 flex items-center gap-2">
-          <Logo className="h-7" />
-          <span className="text-lg font-bold text-on-surface">NEXUS</span>
+          <Link to="/loja" className="flex items-center gap-2">
+            <Logo className="h-7" />
+            <span className="text-lg font-bold text-on-surface">NEXUS</span>
+          </Link>
         </div>
 
         <nav className="flex-1 px-3 space-y-1">
@@ -68,8 +70,10 @@ export default function AdminLayout() {
           <aside className="relative w-64 bg-surface-container-lowest border-r border-outline-variant flex flex-col">
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-2">
-                <Logo className="h-7" />
-                <span className="text-lg font-bold text-on-surface">NEXUS</span>
+                <Link to="/loja" className="flex items-center gap-2">
+                  <Logo className="h-7" />
+                  <span className="text-lg font-bold text-on-surface">NEXUS</span>
+                </Link>
               </div>
               <button onClick={() => setMenuAberto(false)} className="text-on-surface-variant hover:text-on-surface">
                 <X size={20} />

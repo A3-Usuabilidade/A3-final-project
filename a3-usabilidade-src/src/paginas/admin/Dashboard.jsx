@@ -155,6 +155,7 @@ export default function Dashboard() {
             <p className="text-xs text-on-surface-variant mt-0.5">Top 10 por total de vendas</p>
           </div>
           {ranking.length === 0 ? <SemDados /> : (
+            <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-surface-container-high text-on-surface-variant text-xs font-semibold uppercase tracking-wider">
@@ -178,7 +179,8 @@ export default function Dashboard() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+              </table>
+            </div>
           )}
         </section>
 

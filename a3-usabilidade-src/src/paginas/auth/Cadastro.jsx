@@ -133,7 +133,7 @@ export default function Cadastro() {
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   required
-                  className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                  className="auth-input h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                   placeholder={TEXTO_EXEMPLO_NOME}
                 />
               </div>
@@ -145,7 +145,7 @@ export default function Cadastro() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                  className="auth-input h-12 w-full rounded-[1rem] px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                   placeholder="exemplo@nexus.com"
                 />
               </div>
@@ -160,7 +160,7 @@ export default function Cadastro() {
                     maxLength={2}
                     value={diaNascimento}
                     onChange={(e) => handleDatePartChange(e.target.value, setDiaNascimento, 2, mesNascimentoRef)}
-                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Dia"
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
@@ -172,7 +172,7 @@ export default function Cadastro() {
                     value={mesNascimento}
                     onChange={(e) => handleDatePartChange(e.target.value, setMesNascimento, 2, anoNascimentoRef)}
                     onKeyDown={(e) => handleDatePartKeyDown(e, mesNascimento, diaNascimentoRef)}
-                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder={TEXTO_MES}
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
@@ -184,7 +184,7 @@ export default function Cadastro() {
                     value={anoNascimento}
                     onChange={(e) => handleDatePartChange(e.target.value, setAnoNascimento, 4)}
                     onKeyDown={(e) => handleDatePartKeyDown(e, anoNascimento, mesNascimentoRef)}
-                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Ano"
                   />
                 </div>
@@ -199,7 +199,7 @@ export default function Cadastro() {
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
                       required
-                      className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                      className="auth-input h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                       placeholder={PLACEHOLDER_SENHA}
                     />
                     <BotaoSenha
@@ -218,7 +218,7 @@ export default function Cadastro() {
                       value={confirmarSenha}
                       onChange={(e) => setConfirmarSenha(e.target.value)}
                       required
-                      className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                      className="auth-input h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                       placeholder={PLACEHOLDER_SENHA}
                     />
                     <BotaoSenha

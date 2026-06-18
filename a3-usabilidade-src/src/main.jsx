@@ -13,6 +13,9 @@ import AdminLayout from './layouts/AdminLayout.jsx'
 import Dashboard from './paginas/admin/Dashboard.jsx'
 import GerenciarJogos from './paginas/admin/GerenciarJogos.jsx'
 import GerenciarEmpresas from './paginas/admin/GerenciarEmpresas.jsx'
+import Biblioteca from './paginas/Biblioteca.jsx'
+import Avaliacoes from './paginas/Avaliacoes.jsx'
+import Wishlist from './paginas/Wishlist.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -27,7 +30,9 @@ createRoot(document.getElementById('root')).render(
         <Route element={<RotaProtegida />}>
           <Route path="/loja" element={<p className="text-white p-8">Em breve — Loja</p>} />
           <Route path="/checkout" element={<p className="text-white p-8">Em breve — Checkout</p>} />
-          <Route path="/biblioteca" element={<p className="text-white p-8">Em breve — Biblioteca</p>} />
+          <Route path="/biblioteca" element={<Biblioteca />} />
+          <Route path="/avaliacoes" element={<Avaliacoes />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/perfil" element={<Perfil />} /> 
         </Route>
         <Route element={<RotaProtegida apenasAdmin />}>

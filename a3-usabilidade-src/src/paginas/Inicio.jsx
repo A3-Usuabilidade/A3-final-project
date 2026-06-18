@@ -1,164 +1,163 @@
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Logo from '../componentes/Logo.jsx';
-import imgCyberpunk from '../recursos/imagens/jogos/cyberpunk-2077.jpg';
-import imgMinecraft from '../recursos/imagens/jogos/minecraft.jpg';
-import imgWitcher from '../recursos/imagens/jogos/the-witcher-3.jpg';
-import imgGta from '../recursos/imagens/jogos/gta-v.jpg';
-import imgElden from '../recursos/imagens/jogos/elden-ring.jpg';
 
-/* ─── dados dos cards (fan de capas) ─── */
+/* ─── capas dos jogos (extras → src/recursos/imagens/jogos) ─── */
+import imgWitcher  from '../recursos/imagens/jogos/the-witcher-3-cover.jpg';
+import imgGta      from '../recursos/imagens/jogos/gta-v-cover.jpg';
+import imgElden    from '../recursos/imagens/jogos/elden-ring.jpg';
+import imgCyberpunk from '../recursos/imagens/jogos/cyberpunk-2077.jpg';
+import imgHorizon  from '../recursos/imagens/jogos/horizon-zero-dawn.jpg';
+
+/*
+ * Fan de 5 cards:
+ *  - central: maior, sem rotação, opacidade 1, z alto
+ *  - laterais internos: médios, rotação ±4°
+ *  - laterais externos: menores, rotação ±9°, opacidade baixa
+ * Hover: scale-up via CSS class, sem framer-motion
+ */
 const CAPAS = [
   {
     nome: 'Cyberpunk 2077',
     src: imgCyberpunk,
-    style: {
-      left: 'calc(50% - 370px)',
-      width: 200,
-      height: 280,
-      rotate: '-9deg',
-      scale: 0.82,
-      opacity: 0.5,
-      zIndex: 1,
-      animDelay: '0.1s',
-      floatClass: 'card-float-a',
-    },
+    left: 'calc(50% - 380px)',
+    w: 195,
+    h: 275,
+    rotate: '-10deg',
+    scale: 0.8,
+    opacity: 0.45,
+    z: 1,
   },
   {
-    nome: 'Minecraft',
-    src: imgMinecraft,
-    style: {
-      left: 'calc(50% - 205px)',
-      width: 240,
-      height: 330,
-      rotate: '-4deg',
-      scale: 0.92,
-      opacity: 0.78,
-      zIndex: 2,
-      animDelay: '0.2s',
-      floatClass: 'card-float-b',
-    },
+    nome: 'Horizon Zero Dawn',
+    src: imgHorizon,
+    left: 'calc(50% - 205px)',
+    w: 240,
+    h: 340,
+    rotate: '-4deg',
+    scale: 0.93,
+    opacity: 0.75,
+    z: 2,
   },
   {
     nome: 'The Witcher 3',
     src: imgWitcher,
-    style: {
-      left: '50%',
-      width: 300,
-      height: 420,
-      rotate: '0deg',
-      scale: 1,
-      opacity: 1,
-      zIndex: 5,
-      animDelay: '0s',
-      floatClass: 'card-float-c',
-    },
+    left: '50%',
+    w: 295,
+    h: 415,
+    rotate: '0deg',
+    scale: 1,
+    opacity: 1,
+    z: 5,
   },
   {
     nome: 'Grand Theft Auto V',
     src: imgGta,
-    style: {
-      left: 'calc(50% + 165px)',
-      width: 240,
-      height: 330,
-      rotate: '4deg',
-      scale: 0.92,
-      opacity: 0.78,
-      zIndex: 2,
-      animDelay: '0.15s',
-      floatClass: 'card-float-b',
-    },
+    left: 'calc(50% + 165px)',
+    w: 240,
+    h: 340,
+    rotate: '4deg',
+    scale: 0.93,
+    opacity: 0.75,
+    z: 2,
   },
   {
     nome: 'Elden Ring',
     src: imgElden,
-    style: {
-      left: 'calc(50% + 330px)',
-      width: 200,
-      height: 280,
-      rotate: '9deg',
-      scale: 0.82,
-      opacity: 0.5,
-      zIndex: 1,
-      animDelay: '0.05s',
-      floatClass: 'card-float-a',
-    },
+    left: 'calc(50% + 345px)',
+    w: 195,
+    h: 275,
+    rotate: '10deg',
+    scale: 0.8,
+    opacity: 0.45,
+    z: 1,
   },
 ];
 
 export default function Inicio() {
   return (
     <>
-      {/* animações CSS inline — sem framer-motion */}
       <style>{`
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(22px); }
-          to   { opacity: 1; transform: translateY(0); }
+        /* entrada suave — sem framer-motion */
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0);    }
         }
-        @keyframes floatA {
-          0%, 100% { transform: translateX(-50%) rotate(var(--r)) scale(var(--s)) translateY(0px); }
-          50%       { transform: translateX(-50%) rotate(var(--r)) scale(var(--s)) translateY(-8px); }
+        .anim-0 { animation: fadeUp .6s .00s ease both; }
+        .anim-1 { animation: fadeUp .6s .10s ease both; }
+        .anim-2 { animation: fadeUp .6s .22s ease both; }
+        .anim-3 { animation: fadeUp .6s .36s ease both; }
+
+        /* hover nos cards: leve escala + sobe opacidade */
+        .capa-card {
+          transition: transform .28s ease, opacity .28s ease, box-shadow .28s ease, z-index 0s .28s;
         }
-        @keyframes floatB {
-          0%, 100% { transform: translateX(-50%) rotate(var(--r)) scale(var(--s)) translateY(0px); }
-          50%       { transform: translateX(-50%) rotate(var(--r)) scale(var(--s)) translateY(-12px); }
-        }
-        @keyframes floatC {
-          0%, 100% { transform: translateX(-50%) rotate(var(--r)) scale(var(--s)) translateY(0px); }
-          50%       { transform: translateX(-50%) rotate(var(--r)) scale(var(--s)) translateY(-16px); }
-        }
-        .card-float-a { animation: floatA 5.2s ease-in-out infinite; }
-        .card-float-b { animation: floatB 4.6s ease-in-out infinite; }
-        .card-float-c { animation: floatC 4.0s ease-in-out infinite; }
-        .hero-fade    { animation: fadeSlideUp 0.7s ease both; }
-        .hero-fade-1  { animation: fadeSlideUp 0.7s 0.10s ease both; }
-        .hero-fade-2  { animation: fadeSlideUp 0.7s 0.22s ease both; }
-        .hero-fade-3  { animation: fadeSlideUp 0.7s 0.38s ease both; }
-        .card-hover:hover {
+        .capa-card:hover {
+          transform: translateX(-50%) rotate(var(--r)) scale(calc(var(--s) + 0.06)) !important;
           opacity: 1 !important;
-          z-index: 10 !important;
-          box-shadow: 0 28px 56px -10px rgba(57,140,235,0.45) !important;
-          transition: opacity 0.25s, box-shadow 0.25s;
+          box-shadow: 0 28px 56px -8px rgba(57,140,235,.42) !important;
+          z-index: 20 !important;
+          transition: transform .28s ease, opacity .28s ease, box-shadow .28s ease, z-index 0s 0s;
         }
       `}</style>
 
-      <div className="relative min-h-screen overflow-hidden flex flex-col"
-           style={{ background: 'linear-gradient(180deg, #f8fbff 0%, #edf4fc 100%)' }}>
+      <div
+        className="relative min-h-screen flex flex-col overflow-hidden text-white"
+        style={{ background: 'linear-gradient(160deg, #05070b 55%, #0d1f3c 100%)' }}
+      >
+        {/* glow azul superior */}
+        <div
+          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[420px]"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(57,140,235,.22) 0%, transparent 68%)' }}
+          aria-hidden="true"
+        />
 
-        {/* fundo escuro */}
-        <div className="dark:block hidden absolute inset-0 pointer-events-none"
-             style={{ background: 'linear-gradient(180deg, #05070b 0%, #080c14 100%)' }} />
-
-        {/* glow azul central */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
-             style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(57,140,235,0.18) 0%, transparent 70%)' }}
-             aria-hidden="true" />
-
-        {/* ── HEADER ── */}
+        {/* ───────────── HEADER ───────────── */}
         <header className="relative z-20 w-full">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-10">
-            <Link to="/" className="flex items-center gap-2.5 select-none">
-              <Logo className="h-9 w-7 text-slate-900 dark:text-white" />
-              <span className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+          <div className="mx-auto flex max-w-7xl items-center px-8 py-6 sm:px-12">
+
+            {/* NAV — esquerda, bold azul */}
+            <nav className="flex items-center gap-7 mr-auto" aria-label="Navegação principal">
+              <Link
+                to="/loja"
+                className="text-sm font-black uppercase tracking-wider text-[#398CEB] hover:text-[#AED4FF] transition-colors"
+              >
+                Jogos
+              </Link>
+              <Link
+                to="/loja"
+                className="text-sm font-black uppercase tracking-wider text-[#398CEB] hover:text-[#AED4FF] transition-colors"
+              >
+                Loja
+              </Link>
+            </nav>
+
+            {/* LOGO — centralizada absoluta */}
+            <Link
+              to="/"
+              className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 select-none"
+              aria-label="Nexus — página inicial"
+            >
+              <Logo className="h-12 w-9 text-white drop-shadow-[0_0_18px_rgba(57,140,235,.6)]" />
+              <span
+                className="text-3xl font-black tracking-[0.04em] text-white"
+                style={{ textShadow: '0 0 28px rgba(57,140,235,.45)' }}
+              >
                 NEXUS
               </span>
             </Link>
 
-            <nav className="hidden sm:flex items-center gap-6 text-sm font-semibold text-slate-500 dark:text-white/55">
-              <Link to="/loja" className="hover:text-[#398CEB] transition-colors">Loja</Link>
-              <Link to="/loja" className="hover:text-[#398CEB] transition-colors">Jogos</Link>
-            </nav>
-
-            <div className="flex items-center gap-2.5">
+            {/* AÇÕES — direita */}
+            <div className="ml-auto flex items-center gap-3">
               <Link
                 to="/entrar"
-                className="inline-flex h-10 items-center rounded-full border border-slate-300/80 bg-white/80 px-5 text-sm font-bold text-slate-800 shadow-sm backdrop-blur transition hover:border-[#398CEB]/40 hover:text-[#2f7fd9] dark:border-white/10 dark:bg-white/6 dark:text-white dark:hover:border-[#398CEB]/45 dark:hover:text-[#AED4FF]"
+                className="inline-flex h-10 items-center rounded-full border border-white/15 bg-white/6 px-5 text-sm font-bold text-white/85 backdrop-blur transition hover:border-[#398CEB]/50 hover:text-white"
               >
                 Entrar
               </Link>
               <Link
                 to="/cadastro"
-                className="hidden sm:inline-flex h-10 items-center rounded-full bg-[#398CEB] px-5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(57,140,235,0.3)] transition hover:bg-[#4a95ef] active:scale-95"
+                className="hidden sm:inline-flex h-10 items-center rounded-full bg-[#398CEB] px-5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(57,140,235,.35)] transition hover:bg-[#4a95ef] active:scale-95"
               >
                 Criar conta
               </Link>
@@ -166,123 +165,115 @@ export default function Inicio() {
           </div>
         </header>
 
-        {/* ── HERO ── */}
-        <main className="relative z-10 flex flex-col items-center flex-1 px-5 pb-10 pt-10 sm:pt-14">
+        {/* ───────────── HERO ───────────── */}
+        <main className="relative z-10 flex flex-1 flex-col items-center pt-10 pb-8 px-5">
+
           {/* badge */}
-          <span
-            className="hero-fade inline-flex items-center rounded-full border border-[#398CEB]/20 bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#2f7fd9] shadow-sm backdrop-blur dark:border-[#AED4FF]/20 dark:bg-white/6 dark:text-[#AED4FF]"
-          >
+          <span className="anim-0 inline-flex items-center rounded-full border border-[#398CEB]/25 bg-[#398CEB]/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[.18em] text-[#AED4FF]">
             Plataforma de jogos digitais
           </span>
 
           {/* título */}
-          <h1
-            className="hero-fade-1 mt-5 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-slate-900 dark:text-white sm:text-5xl lg:text-6xl"
-          >
+          <h1 className="anim-1 mt-5 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-[3.6rem]">
             Sua loja e biblioteca
-            <span className="block text-[#398CEB]">em um só lugar.</span>
+            <span className="block text-[#398CEB]" style={{ textShadow: '0 0 32px rgba(57,140,235,.4)' }}>
+              em um só lugar.
+            </span>
           </h1>
 
           {/* subtítulo */}
-          <p className="hero-fade-2 mt-4 max-w-xl text-center text-base leading-7 text-slate-500 dark:text-white/60 sm:text-lg">
+          <p className="anim-2 mt-4 max-w-lg text-center text-base leading-7 text-white/55 sm:text-lg">
             Explore jogos, gerencie sua coleção e descubra novos títulos com uma experiência limpa e consistente.
           </p>
 
           {/* CTAs */}
-          <div className="hero-fade-3 mt-7 flex flex-col items-center gap-3 sm:flex-row">
+          <div className="anim-3 mt-7 flex flex-col items-center gap-3 sm:flex-row">
             <Link
               to="/cadastro"
-              className="inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-[#398CEB] px-7 text-sm font-bold text-white shadow-[0_12px_32px_rgba(57,140,235,0.32)] transition hover:bg-[#4a95ef] active:scale-95"
+              className="inline-flex h-12 min-w-[200px] items-center justify-center rounded-full bg-[#398CEB] px-7 text-sm font-bold text-white shadow-[0_12px_32px_rgba(57,140,235,.35)] transition hover:bg-[#4a95ef] active:scale-95"
             >
               Criar conta grátis
             </Link>
             <Link
               to="/loja"
-              className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/80 px-7 text-sm font-bold text-slate-800 shadow-sm backdrop-blur transition hover:border-[#398CEB]/35 hover:text-[#2f7fd9] dark:border-white/12 dark:bg-white/6 dark:text-white dark:hover:border-[#398CEB]/40 dark:hover:text-[#AED4FF]"
+              className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-full border border-white/15 bg-white/6 px-7 text-sm font-bold text-white/80 backdrop-blur transition hover:border-[#398CEB]/45 hover:text-white"
             >
               Ver jogos
               <ArrowRight size={15} strokeWidth={2.5} aria-hidden="true" />
             </Link>
           </div>
 
-          {/* ── FAN DE CAPAS ── */}
+          {/* ───────── FAN DE CAPAS ───────── */}
           <div
-            className="hero-fade-3 relative w-full mt-12 sm:mt-16"
+            className="anim-3 relative w-full mt-14 sm:mt-16 select-none"
             style={{ height: 460 }}
-            aria-hidden="true"
+            aria-label="Capas de jogos em destaque"
           >
-            {CAPAS.map((capa) => {
-              const s = capa.style;
-              return (
-                <div
-                  key={capa.nome}
-                  className={`absolute card-hover ${s.floatClass}`}
-                  style={{
-                    left: s.left,
-                    width: s.width,
-                    height: s.height,
-                    zIndex: s.zIndex,
-                    opacity: s.opacity,
-                    borderRadius: 16,
-                    overflow: 'hidden',
-                    boxShadow: s.zIndex >= 5
-                      ? '0 24px 48px -8px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08)'
-                      : '0 10px 28px -6px rgba(0,0,0,0.4)',
-                    /* variáveis CSS para a keyframe usar */
-                    '--r': s.rotate,
-                    '--s': s.scale,
-                    transform: `translateX(-50%) rotate(${s.rotate}) scale(${s.scale})`,
-                    animationDelay: s.animDelay,
-                    cursor: 'default',
-                    transition: 'opacity 0.25s, box-shadow 0.25s',
-                  }}
-                  title={capa.nome}
-                >
-                  <img
-                    src={capa.src}
-                    alt={capa.nome}
-                    className="w-full h-full object-cover"
-                    loading="eager"
-                    draggable="false"
+            {CAPAS.map((c) => (
+              <div
+                key={c.nome}
+                className="capa-card absolute"
+                style={{
+                  left: c.left,
+                  width: c.w,
+                  height: c.h,
+                  zIndex: c.z,
+                  opacity: c.opacity,
+                  borderRadius: 14,
+                  overflow: 'hidden',
+                  /* variáveis para o :hover no CSS */
+                  '--r': c.rotate,
+                  '--s': c.scale,
+                  transform: `translateX(-50%) rotate(${c.rotate}) scale(${c.scale})`,
+                  boxShadow: c.z >= 5
+                    ? '0 24px 48px -6px rgba(0,0,0,.75), 0 0 0 1px rgba(255,255,255,.06)'
+                    : '0 10px 26px -5px rgba(0,0,0,.5)',
+                  cursor: 'default',
+                }}
+                title={c.nome}
+              >
+                <img
+                  src={c.src}
+                  alt={`Capa: ${c.nome}`}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  draggable="false"
+                />
+                {/* borda interna sutil no card central */}
+                {c.z >= 5 && (
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{ boxShadow: 'inset 0 0 0 1px rgba(174,212,255,.15)', borderRadius: 14 }}
                   />
-                  {/* brilho de borda no card central */}
-                  {s.zIndex >= 5 && (
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        boxShadow: 'inset 0 0 0 1px rgba(174,212,255,0.18)',
-                        borderRadius: 16,
-                      }}
-                    />
-                  )}
-                </div>
-              );
-            })}
+                )}
+              </div>
+            ))}
 
             {/* sombra de chão */}
             <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[480px] h-[60px] pointer-events-none"
+              className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-14"
               style={{
-                background: 'radial-gradient(ellipse at 50% 100%, rgba(57,140,235,0.14) 0%, transparent 70%)',
-                filter: 'blur(12px)',
+                background: 'radial-gradient(ellipse at 50% 100%, rgba(57,140,235,.18) 0%, transparent 70%)',
+                filter: 'blur(10px)',
               }}
+              aria-hidden="true"
             />
           </div>
         </main>
 
-        {/* ── FOOTER ── */}
-        <footer className="relative z-20 border-t border-slate-200/70 bg-white/50 backdrop-blur-sm dark:border-white/8 dark:bg-black/20">
-          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-5 text-sm text-slate-500 dark:text-white/45 sm:px-10 md:flex-row md:items-center md:justify-between">
+        {/* ───────────── FOOTER ───────────── */}
+        <footer className="relative z-20 border-t border-white/8 bg-black/20 backdrop-blur-sm">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-8 py-5 text-sm text-white/40 sm:px-12 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2">
-              <Logo className="h-7 w-5 text-slate-800 dark:text-white/60" />
-              <span className="font-bold text-slate-800 dark:text-white/70">NEXUS</span>
+              <Logo className="h-6 w-5 text-white/50" />
+              <span className="font-bold text-white/55">NEXUS</span>
             </div>
-            <div className="flex flex-wrap gap-x-5 gap-y-1.5">
-              <Link to="/entrar" className="hover:text-slate-800 dark:hover:text-white transition-colors">Entrar</Link>
-              <Link to="/cadastro" className="hover:text-slate-800 dark:hover:text-white transition-colors">Criar conta</Link>
-              <Link to="/loja" className="hover:text-slate-800 dark:hover:text-white transition-colors">Loja</Link>
+            <div className="flex flex-wrap gap-x-5 gap-y-1">
+              <Link to="/entrar" className="hover:text-white transition-colors">Entrar</Link>
+              <Link to="/cadastro" className="hover:text-white transition-colors">Criar conta</Link>
+              <Link to="/loja" className="hover:text-white transition-colors">Loja</Link>
             </div>
-            <p className="text-xs font-medium uppercase tracking-[0.12em] text-slate-400 dark:text-white/30">
+            <p className="text-xs font-medium uppercase tracking-[.12em] text-white/25">
               © 2026 Nexus Digital Store
             </p>
           </div>

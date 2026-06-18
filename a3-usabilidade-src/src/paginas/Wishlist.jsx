@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import useWishlist from '../hooks/useWishlist.js';
 import useTheme from '../hooks/useTheme.js';
 import useCarrinho from '../hooks/useCarrinho.js';
+import useToastContext from '../hooks/useToastContext.js';
 import ModalDetalhes from '../componentes/ModalDetalhes.jsx';
 
 
@@ -50,11 +51,16 @@ export default function Wishlist() {
   const { dark: estaTemaEscuro } = useTheme();
   const { lista, carregando, remover, estaDesejado, alternar } = useWishlist();
   const { adicionar } = useCarrinho();
+  const mostrarToast = useToastContext();
   const [jogoSelecionado, setJogoSelecionado] = useState(null);
 
   async function adicionarAoCarrinho(jogo) {
     if (!jogo.id) return;
-    await adicionar(jogo.id);
+    const ok = await adicionar(jogo.id);
+    mostrarToast(
+      ok ? `${jogo.nome} foi adicionado ao carrinho.` : 'Não foi possível adicionar ao carrinho.',
+      ok ? 'sucesso' : 'erro',
+    );
   }
 
   const bg = estaTemaEscuro ? 'bg-black' : 'bg-white';

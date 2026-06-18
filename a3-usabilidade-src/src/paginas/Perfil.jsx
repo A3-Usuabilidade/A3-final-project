@@ -6,6 +6,7 @@ import useProfile from '../hooks/useProfile.js';
 import useAvaliacoes from '../hooks/useAvaliacoes.js';
 import useWishlist from '../hooks/useWishlist.js';
 import useCarrinho from '../hooks/useCarrinho.js';
+import useToastContext from '../hooks/useToastContext.js';
 import api from '../servicos/api.js';
 import BotaoSair from '../componentes/BotaoSair.jsx';
 import BotaoSenha from '../componentes/ui/Botaosenha.jsx';
@@ -18,6 +19,7 @@ export default function Perfil() {
   const { minhasAvaliacoes, carregando: carregandoAval, carregarMinhasAvaliacoes } = useAvaliacoes();
   const { estaDesejado, alternar: alternarDesejo } = useWishlist();
   const { adicionar } = useCarrinho();
+  const mostrarToast = useToastContext();
   const [jogosMap, setJogosMap] = useState({});
   const [jogoSelecionado, setJogoSelecionado] = useState(null);
   const [erroForm, setErroForm] = useState(null);
@@ -85,7 +87,11 @@ export default function Perfil() {
 
   async function adicionarAoCarrinho(jogo) {
     if (!jogo?.id) return;
-    await adicionar(jogo.id);
+    const ok = await adicionar(jogo.id);
+    mostrarToast(
+      ok ? `${jogo.nome} foi adicionado ao carrinho.` : 'Não foi possível adicionar ao carrinho.',
+      ok ? 'sucesso' : 'erro',
+    );
   }
 
   const onEditar = async (formData) => {

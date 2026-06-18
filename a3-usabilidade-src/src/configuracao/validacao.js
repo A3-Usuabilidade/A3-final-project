@@ -192,3 +192,11 @@ export const esquemaPagamento = z.object({
     .string()
     .regex(/^\d{3,4}$/, 'CVV deve ter 3 ou 4 dígitos'),
 });
+
+// ===========================================
+// Categoria
+// ===========================================
+
+export const esquemaCategoria = z.object({
+  nome: z.string().trim().min(1, 'Nome da categoria é obrigatório'),
+});

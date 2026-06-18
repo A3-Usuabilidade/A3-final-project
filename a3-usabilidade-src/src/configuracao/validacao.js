@@ -115,3 +115,46 @@ export const esquemaAlterarSenha = z
     message: 'A nova senha não pode ser igual à senha atual',
     path: ['newPassword'],
   });
+
+// ===========================================
+// Jogo
+// ===========================================
+
+function esquemaFk(msg) {
+  return z.string()
+    .min(1, msg)
+    .refine((v) => !isNaN(Number(v)), 'Selecione um valor válido')
+    .transform(Number);
+}
+
+function esquemaNumero(msg) {
+  return z.string()
+    .trim()
+    .min(1, msg)
+    .refine((v) => !isNaN(Number(v)), 'Deve ser um número válido')
+    .transform(Number);
+}
+
+export const esquemaJogo = z.object({
+  nome: z.string().trim().min(1, 'Nome do jogo é obrigatório'),
+  fkEmpresa:       esquemaFk('Empresa é obrigatória'),
+  fkCategoria:     esquemaFk('Categoria é obrigatória'),
+  ano:             esquemaNumero('Ano de lançamento é obrigatório')
+                     .refine((n) => n >= 1950 && n <= new Date().getFullYear() + 1,
+                       'Ano fora do intervalo permitido'),
+  preco:           esquemaNumero('Preço é obrigatório')
+                     .refine((n) => n > 0, 'Preço deve ser maior que zero'),
+  desconto: z.string().optional()
+    .transform((v) => (v ? Number(v) : undefined))
+    .refine((n) => n === undefined || (n >= 0 && n <= 100),
+      'Desconto deve ser entre 0 e 100'),
+  descricao: z.string().optional(),
+});
+
+// ===========================================
+// Empresa
+// ===========================================
+
+export const esquemaEmpresa = z.object({
+  nome: z.string().trim().min(1, 'Nome da empresa é obrigatório'),
+});

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useProfile from '../hooks/useProfile.js';
 import BotaoSair from '../componentes/BotaoSair.jsx';
 import { esquemaEditarPerfil, esquemaAlterarSenha } from '../configuracao/validacao.js';
 
 export default function Perfil() {
+  const navigate = useNavigate();
   const { dados, carregando, erro, atualizar, alterarSenha } = useProfile();
   const [erroForm, setErroForm] = useState(null);
   const [sucessoForm, setSucessoForm] = useState(null);
@@ -119,6 +121,13 @@ export default function Perfil() {
       <div className="max-w-2xl mx-auto space-y-6">
 
         <div className="flex items-center justify-between">
+          <button
+    type="button"
+    onClick={() => navigate(-1)}
+    className="border border-outline-variant px-4 py-1.5 rounded-lg text-sm text-on-surface hover:brightness-90 transition cursor-pointer"
+  >
+    ← Voltar
+  </button>
           <h1 className="text-2xl font-semibold text-on-surface">Meu Perfil</h1>
           <BotaoSair className="border border-outline-variant px-4 py-1.5" />
         </div>

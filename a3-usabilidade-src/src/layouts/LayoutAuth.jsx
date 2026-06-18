@@ -1,5 +1,4 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import ThemeToggle from '../componentes/ThemeToggle.jsx';
 
 export default function LayoutAuth() {
   const location = useLocation();
@@ -19,14 +18,13 @@ export default function LayoutAuth() {
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.75'/%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat',
             backgroundSize: '220px 220px',
-            opacity: 0.08,
+            opacity: 5,
             mixBlendMode: 'soft-light',
           }}
         />
         <div className="relative z-10 min-h-screen">
           <Outlet />
         </div>
-        <ThemeToggle className="border-[#aed4ff]/40 bg-white text-black shadow-[0_18px_38px_rgba(57,140,235,0.2)] dark:border-[#398ceb]/30 dark:bg-black dark:text-white dark:shadow-[0_18px_38px_rgba(57,140,235,0.18)] top-4 right-4 bottom-auto" />
       </div>
     );
   }
@@ -52,8 +50,6 @@ export default function LayoutAuth() {
       <div className="relative z-10 flex w-full flex-col items-center">
         <Outlet />
       </div>
-
-      <ThemeToggle />
 
       <div className="relative z-10 mt-8 space-x-2 text-center text-sm font-medium text-slate-700 dark:text-white/78">
         <a href="#" className="transition-colors hover:text-slate-950 dark:hover:text-white">Termos de Uso</a>

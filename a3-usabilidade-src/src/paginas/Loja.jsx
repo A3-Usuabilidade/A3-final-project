@@ -136,17 +136,17 @@ function IconeUsuario({ tom = 'escuro' }) {
 
   return (
     <svg
-      viewBox="0 0 26 29"
+      viewBox="0 0 24 24"
       className={`h-5 w-5 shrink-0 ${classeCor}`}
       fill="none"
       stroke="currentColor"
-      strokeWidth="3"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M6.42857 7.27778C6.42857 10.4688 9.3707 13.0556 13 13.0556C16.6293 13.0556 19.5714 10.4688 19.5714 7.27778C19.5714 4.0868 16.6293 1.5 13 1.5C9.3707 1.5 6.42857 4.0868 6.42857 7.27778Z" fill="currentColor" />
-      <path d="M24.5 27.5C24.5 21.9158 19.3513 17.3889 13 17.3889C6.64873 17.3889 1.5 21.9158 1.5 27.5M13 13.0556C9.3707 13.0556 6.42857 10.4688 6.42857 7.27778C6.42857 4.0868 9.3707 1.5 13 1.5C16.6293 1.5 19.5714 4.0868 19.5714 7.27778C19.5714 10.4688 16.6293 13.0556 13 13.0556Z" />
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c1.8-3.4 5-5 8-5s6.2 1.6 8 5" />
     </svg>
   );
 }

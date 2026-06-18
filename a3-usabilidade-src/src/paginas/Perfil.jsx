@@ -1,17 +1,21 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useProfile from '../hooks/useProfile.js';
 import useAvaliacoes from '../hooks/useAvaliacoes.js';
+import useWishlist from '../hooks/useWishlist.js';
 import api from '../servicos/api.js';
 import BotaoSair from '../componentes/BotaoSair.jsx';
 import BotaoSenha from '../componentes/ui/Botaosenha.jsx';
+import { ModalDetalhes } from './Loja.jsx';
 import { esquemaEditarPerfil, esquemaAlterarSenha } from '../configuracao/validacao.js';
 
 export default function Perfil() {
   const { dados, carregando, erro, atualizar, alterarSenha } = useProfile();
   const { minhasAvaliacoes, carregando: carregandoAval, carregarMinhasAvaliacoes } = useAvaliacoes();
-  const [nomesJogos, setNomesJogos] = useState({});
+  const { estaDesejado, alternar: alternarDesejo } = useWishlist();
+  const [jogosMap, setJogosMap] = useState({});
+  const [jogoSelecionado, setJogoSelecionado] = useState(null);
   const [erroForm, setErroForm] = useState(null);
   const [sucessoForm, setSucessoForm] = useState(null);
   const [erroSenhaForm, setErroSenhaForm] = useState(null);
@@ -58,11 +62,32 @@ export default function Perfil() {
       api.get('/jogos').then(({ data }) => {
         const lista = Array.isArray(data) ? data : Array.isArray(data?.value) ? data.value : [];
         const mapa = {};
-        lista.forEach((j) => { mapa[j.id] = j.nome; });
-        setNomesJogos(mapa);
+        lista.forEach((j) => {
+          mapa[j.id] = {
+            id: j.id,
+            nome: j.nome || j.titulo || '',
+            categoria: j.categoria?.nome || j.categoria || '',
+            empresa: j.empresa?.nome || j.empresa || '',
+            ano: j.ano || j.anoLancamento || null,
+            preco: j.preco || j.valor || 0,
+            descricao: j.descricao || '',
+            capa: j.capa || j.imagem || j.urlImagem || '',
+          };
+        });
+        setJogosMap(mapa);
       }).catch(() => {});
     }
   }, [minhasAvaliacoes]);
+
+  async function adicionarAoCarrinho(jogo) {
+    if (!jogo?.id) return;
+    try {
+      await api.post('/carrinho/add', { jogoId: jogo.id });
+      alert('Jogo adicionado ao carrinho com sucesso!');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Erro ao adicionar ao carrinho.');
+    }
+  }
 
   const onEditar = async (formData) => {
     setErroForm(null);
@@ -365,33 +390,40 @@ export default function Perfil() {
           )}
         </section>
 
-        {/* Minhas AnÃ¡lises */}
+        {/* Minhas Análises */}
         <section className="bg-surface-container border border-outline-variant rounded-2xl p-8 space-y-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-on-surface">Minhas AnÃ¡lises</h2>
-            <span className="text-sm text-on-surface-variant">{minhasAvaliacoes.length} {minhasAvaliacoes.length === 1 ? 'anÃ¡lise' : 'anÃ¡lises'}</span>
+            <h2 className="text-xl font-semibold text-on-surface">Minhas Análises</h2>
+            <span className="text-sm text-on-surface-variant">{minhasAvaliacoes.length} {minhasAvaliacoes.length === 1 ? 'análise' : 'análises'}</span>
           </div>
 
           {carregandoAval && (
-            <p className="text-on-surface-variant text-sm text-center py-4">Carregando anÃ¡lises...</p>
+            <p className="text-on-surface-variant text-sm text-center py-4">Carregando análises...</p>
           )}
 
           {!carregandoAval && minhasAvaliacoes.length === 0 && (
             <div className="text-center py-6">
-              <p className="text-on-surface-variant text-sm">VocÃª ainda nÃ£o avaliou nenhum jogo.</p>
-              <p className="text-on-surface-variant text-xs mt-1">Abra um jogo na loja e clique na aba "AvaliaÃ§Ãµes" para deixar sua anÃ¡lise.</p>
+              <p className="text-on-surface-variant text-sm">Você ainda não avaliou nenhum jogo.</p>
+              <p className="text-on-surface-variant text-xs mt-1">Abra um jogo na loja e clique na aba "Avaliações" para deixar sua análise.</p>
             </div>
           )}
 
           {!carregandoAval && minhasAvaliacoes.length > 0 && (
             <div className="space-y-3">
-              {minhasAvaliacoes.map((av, i) => (
-                <div key={av.id || i} className="bg-surface-container-high border border-outline-variant rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-on-surface">
-                      {nomesJogos[av.fkJogo || av.fk_jogo] || `Jogo #${av.fkJogo || av.fk_jogo}`}
-                    </h3>
-                    <div className="flex items-center gap-1">
+              {minhasAvaliacoes.map((av, i) => {
+                const jId = av.fkJogo || av.fk_jogo;
+                const jogo = jogosMap[jId];
+                return (
+                  <div
+                    key={av.id || i}
+                    onClick={() => { if (jogo) setJogoSelecionado(jogo); }}
+                    className="bg-surface-container-high border border-outline-variant rounded-xl p-4 cursor-pointer hover:bg-surface-container-highest transition"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-bold text-on-surface">
+                        {jogo ? jogo.nome : `Jogo #${jId}`}
+                      </h3>
+                      <div className="flex items-center gap-1">
                       {[0, 1, 2, 3, 4].map((n) => (
                         <svg key={n} viewBox="0 0 24 24" className={`h-4 w-4 ${n < av.nota ? 'text-[#f59e0b]' : 'text-on-surface-variant/30'}`} fill="currentColor">
                           <path d="m12 2.8 2.75 5.57 6.15.9-4.45 4.34 1.05 6.12L12 16.84l-5.5 2.89 1.05-6.12L3.1 9.27l6.15-.9L12 2.8Z" />
@@ -404,11 +436,19 @@ export default function Perfil() {
                     <p className="mt-2 text-sm text-on-surface-variant leading-relaxed">{av.comentario}</p>
                   )}
                 </div>
-              ))}
+              );})}
             </div>
           )}
         </section>
       </div>
+
+      <ModalDetalhes
+        jogo={jogoSelecionado}
+        aoFechar={() => setJogoSelecionado(null)}
+        aoAdicionar={adicionarAoCarrinho}
+        desejado={jogoSelecionado ? estaDesejado(jogoSelecionado.id) : false}
+        aoAlternarDesejo={alternarDesejo}
+      />
     </div>
   );
 }

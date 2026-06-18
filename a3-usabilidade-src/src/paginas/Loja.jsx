@@ -613,13 +613,13 @@ function CardJogo({ jogo, aoSelecionar, aoAdicionar, estaTemaEscuro, desejado, a
   );
 }
 
-function ModalDetalhes({ jogo, aoFechar, aoAdicionar, desejado, aoAlternarDesejo }) {
-  const [aba, setAba] = useState('detalhes');
+export function ModalDetalhes({ jogo, aoFechar, aoAdicionar, desejado, aoAlternarDesejo, abaInicial = 'detalhes', aoAtualizar }) {
+  const [aba, setAba] = useState(abaInicial);
   const [notaForm, setNotaForm] = useState(0);
   const [comentarioForm, setComentarioForm] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [msgSucesso, setMsgSucesso] = useState('');
-  const { avaliacoes, media, total, minhaAvaliacao, carregando: carregandoAval, erro: erroAval, carregarAvaliacoesJogo, carregarMinhaAvaliacao, enviar } = useAvaliacoes();
+  const { avaliacoes, media, total, minhaAvaliacao, carregando: carregandoAval, erro: erroAval, carregarAvaliacoesJogo, carregarMinhaAvaliacao, enviar, remover } = useAvaliacoes();
 
   useEffect(() => {
     function fecharComEsc(event) { if (event.key === 'Escape') aoFechar(); }
@@ -631,10 +631,10 @@ function ModalDetalhes({ jogo, aoFechar, aoAdicionar, desejado, aoAlternarDesejo
     if (jogo?.id) {
       carregarAvaliacoesJogo(jogo.id);
       carregarMinhaAvaliacao(jogo.id);
-      setAba('detalhes');
+      setAba(abaInicial);
       setMsgSucesso('');
     }
-  }, [jogo?.id, carregarAvaliacoesJogo, carregarMinhaAvaliacao]);
+  }, [jogo?.id, carregarAvaliacoesJogo, carregarMinhaAvaliacao, abaInicial]);
 
   useEffect(() => {
     if (minhaAvaliacao) {
@@ -656,6 +656,20 @@ function ModalDetalhes({ jogo, aoFechar, aoAdicionar, desejado, aoAlternarDesejo
     try {
       await enviar(jogo.id, notaForm, comentarioForm);
       setMsgSucesso(minhaAvaliacao ? 'Avaliação atualizada!' : 'Avaliação enviada!');
+      if (aoAtualizar) aoAtualizar();
+    } catch { /* erro tratado no hook */ }
+    setEnviando(false);
+  }
+
+  async function handleExcluirAvaliacao() {
+    setEnviando(true);
+    setMsgSucesso('');
+    try {
+      await remover(jogo.id);
+      setMsgSucesso('Avaliação excluída!');
+      setNotaForm(0);
+      setComentarioForm('');
+      if (aoAtualizar) aoAtualizar();
     } catch { /* erro tratado no hook */ }
     setEnviando(false);
   }
@@ -739,9 +753,17 @@ function ModalDetalhes({ jogo, aoFechar, aoAdicionar, desejado, aoAlternarDesejo
                   </div>
                   {erroAval && <p className="text-xs text-red-400">{erroAval}</p>}
                   {msgSucesso && <p className="text-xs text-green-400">{msgSucesso}</p>}
-                  <button type="submit" disabled={notaForm < 1 || enviando} className="w-full rounded-full bg-[#398ceb] py-2.5 text-sm font-bold text-white transition hover:bg-[#2a78d4] disabled:opacity-40">
-                    {enviando ? 'Enviando...' : minhaAvaliacao ? 'Atualizar Avaliação' : 'Enviar Avaliação'}
-                  </button>
+                  
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={notaForm < 1 || enviando} className="flex-1 rounded-full bg-[#398ceb] py-2.5 text-sm font-bold text-white transition hover:bg-[#2a78d4] disabled:opacity-40">
+                      {enviando ? 'Enviando...' : minhaAvaliacao ? 'Atualizar' : 'Enviar'}
+                    </button>
+                    {minhaAvaliacao && (
+                      <button type="button" onClick={handleExcluirAvaliacao} disabled={enviando} className="rounded-full border border-red-500/50 text-red-400 hover:bg-red-500/10 px-4 py-2.5 text-sm font-bold transition disabled:opacity-40">
+                        Excluir
+                      </button>
+                    )}
+                  </div>
                 </form>
               </div>
 

@@ -17,9 +17,9 @@ export default function useJogos() {
         api.get('/categorias'),
         api.get('/empresas'),
       ]);
-      setJogos(resJogos.data);
-      setCategorias(resCategorias.data);
-      setEmpresas(resEmpresas.data);
+      setJogos(Array.isArray(resJogos.data) ? resJogos.data : []);
+      setCategorias(Array.isArray(resCategorias.data) ? resCategorias.data : []);
+      setEmpresas(Array.isArray(resEmpresas.data) ? resEmpresas.data : []);
     } catch {
       setErro('Não foi possível carregar os dados.');
     } finally {
@@ -35,8 +35,16 @@ export default function useJogos() {
   };
 
   const atualizarJogo = async (id, dados) => {
-    const { data: jogoAtualizado } = await api.put(`/jogos/${id}`, dados);
-    setJogos((prev) => prev.map((j) => (j.id === id ? jogoAtualizado : j)));
+    // O backend retorna { changes: N }, não o jogo atualizado.
+    // Montamos o objeto localmente com os dados enviados + o id original.
+    await api.put(`/jogos/${id}`, dados);
+    setJogos((prev) =>
+      prev.map((j) =>
+        j.id === id
+          ? { ...j, ...dados, id }
+          : j
+      )
+    );
   };
 
   const deletarJogo = async (id) => {

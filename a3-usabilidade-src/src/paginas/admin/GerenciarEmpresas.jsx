@@ -90,7 +90,8 @@ export default function GerenciarEmpresas() {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-          <input required placeholder="Nome da empresa" value={formulario.nome}
+          <label htmlFor="nome-empresa" className="sr-only">Nome da empresa</label>
+          <input required placeholder="Nome da empresa" value={formulario.nome} id="nome-empresa"
             onChange={set('nome')}
             className={`col-span-full ${inputClass}`} />
 

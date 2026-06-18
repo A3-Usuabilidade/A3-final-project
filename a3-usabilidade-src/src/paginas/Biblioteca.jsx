@@ -146,7 +146,6 @@ export default function Biblioteca() {
         {/* Grid */}
         {!carregando && jogosFiltrados.length > 0 && (
           <motion.div
-            key={busca}
             variants={gridAnimacao}
             initial="hidden"
             animate="show"
@@ -166,8 +165,8 @@ export default function Biblioteca() {
                     {jogo.capa ? (
                       <img src={jogo.capa} alt={jogo.nome} className="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,#aed4ff_0,#398ceb_30%,#000_78%)]">
-                        <span className="text-3xl font-black text-white/90">{obterIniciais(jogo.nome)}</span>
+                      <div role="img" aria-label={`Capa do jogo ${jogo.nome}`} className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,#aed4ff_0,#398ceb_30%,#000_78%)]">
+                        <span className="text-3xl font-black text-white/90" aria-hidden="true">{obterIniciais(jogo.nome)}</span>
                       </div>
                     )}
 

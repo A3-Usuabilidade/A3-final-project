@@ -11,7 +11,8 @@ export default function useEmpresas() {
     setErro(null);
     try {
       const resEmpresas = await api.get('/empresas');
-      setEmpresas(resEmpresas.data ?? []);
+      // 204 → axios devolve data: '' (string vazia), não um array
+      setEmpresas(Array.isArray(resEmpresas.data) ? resEmpresas.data : []);
     } catch {
       setErro('Não foi possível carregar os dados.');
     } finally {
@@ -27,13 +28,21 @@ export default function useEmpresas() {
   };
 
   const atualizarEmpresa = async (id, dados) => {
-    const { data: empresaAtualizada } = await api.put(`/empresas/${id}`, dados);
-    setEmpresas((prev) => prev.map((e) => (e.id === id ? empresaAtualizada : e)));
+    // O backend retorna { id, nome } com id como número.
+    // Garantimos que a comparação use Number para não quebrar com id string.
+    await api.put(`/empresas/${id}`, dados);
+    setEmpresas((prev) =>
+      prev.map((e) =>
+        Number(e.id) === Number(id)
+          ? { ...e, ...dados, id: Number(id) }
+          : e
+      )
+    );
   };
 
   const deletarEmpresa = async (id) => {
     await api.delete(`/empresas/${id}`);
-    setEmpresas((prev) => prev.filter((e) => e.id !== id));
+    setEmpresas((prev) => prev.filter((e) => Number(e.id) !== Number(id)));
   };
 
   return { empresas, carregando, erro, criarEmpresa, atualizarEmpresa, deletarEmpresa };

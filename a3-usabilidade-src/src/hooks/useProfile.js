@@ -10,7 +10,10 @@ export default function useProfile() {
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    if (!usuarioId) return;
+    if (!usuarioId) {
+      setCarregando(false);
+      return;
+    }
     api.get(`/usuarios/${usuarioId}`)
       .then((res) => setDados(res.data))
       .catch(() => setErro('Erro ao carregar dados do perfil'))

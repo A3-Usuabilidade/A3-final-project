@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useProfile from '../hooks/useProfile.js';
 import useAvaliacoes from '../hooks/useAvaliacoes.js';
 import useWishlist from '../hooks/useWishlist.js';
+import useCarrinho from '../hooks/useCarrinho.js';
 import api from '../servicos/api.js';
 import BotaoSair from '../componentes/BotaoSair.jsx';
 import BotaoSenha from '../componentes/ui/Botaosenha.jsx';
-import { ModalDetalhes } from './Loja.jsx';
+import ModalDetalhes from '../componentes/ModalDetalhes.jsx';
 import { esquemaEditarPerfil, esquemaAlterarSenha } from '../configuracao/validacao.js';
 
 export default function Perfil() {
+  const navigate = useNavigate();
   const { dados, carregando, erro, atualizar, alterarSenha } = useProfile();
   const { minhasAvaliacoes, carregando: carregandoAval, carregarMinhasAvaliacoes } = useAvaliacoes();
   const { estaDesejado, alternar: alternarDesejo } = useWishlist();
+  const { adicionar } = useCarrinho();
   const [jogosMap, setJogosMap] = useState({});
   const [jogoSelecionado, setJogoSelecionado] = useState(null);
   const [erroForm, setErroForm] = useState(null);
@@ -81,12 +85,7 @@ export default function Perfil() {
 
   async function adicionarAoCarrinho(jogo) {
     if (!jogo?.id) return;
-    try {
-      await api.post('/carrinho/add', { jogoId: jogo.id });
-      alert('Jogo adicionado ao carrinho com sucesso!');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Erro ao adicionar ao carrinho.');
-    }
+    await adicionar(jogo.id);
   }
 
   const onEditar = async (formData) => {
@@ -167,6 +166,13 @@ export default function Perfil() {
       <div className="max-w-2xl mx-auto space-y-6">
 
         <div className="flex items-center justify-between">
+          <button
+    type="button"
+    onClick={() => navigate(-1)}
+    className="border border-outline-variant px-4 py-1.5 rounded-lg text-sm text-on-surface hover:brightness-90 transition cursor-pointer"
+  >
+    ← Voltar
+  </button>
           <h1 className="text-2xl font-semibold text-on-surface">Meu Perfil</h1>
           <BotaoSair className="border border-outline-variant px-4 py-1.5" />
         </div>
@@ -201,28 +207,30 @@ export default function Perfil() {
           <form onSubmit={handleSubmitPerfil(onEditar)} className="space-y-4">
 
             <div>
-              <label className="block text-sm text-on-surface-variant mb-1">
+              <label className="block text-sm text-on-surface-variant mb-1" htmlFor="perfil-email">
                 E-mail
               </label>
               <input
                 type="email"
+                id="perfil-email"
                 value={dados?.email || ''}
                 disabled
                 className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface-variant cursor-not-allowed"
               />
               <p className="text-xs text-on-surface-variant mt-1">
-                O e-mail nÃ£o pode ser alterado
+                O e-mail não pode ser alterado
               </p>
             </div>
 
             <div>
-              <label className="block text-sm text-on-surface-variant mb-1">
+              <label className="block text-sm text-on-surface-variant mb-1" htmlFor="perfil-nome">
                 Nome
               </label>
               {editarAtivo ? (
                 <>
                   <input
                     type="text"
+                    id="perfil-nome"
                     {...registerPerfil('nome')}
                     className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
                   />
@@ -238,13 +246,14 @@ export default function Perfil() {
             </div>
 
             <div>
-              <label className="block text-sm text-on-surface-variant mb-1">
+              <label className="block text-sm text-on-surface-variant mb-1" htmlFor="perfil-nascimento">
                 Data de Nascimento
               </label>
               {editarAtivo ? (
                 <>
                   <input
                     type="date"
+                    id="perfil-nascimento"
                     {...registerPerfil('dataNascimento')}
                     className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
                   />
@@ -270,7 +279,7 @@ export default function Perfil() {
                   disabled={isSubmittingPerfil}
                   className="flex-1 bg-primary text-on-primary font-semibold rounded-lg py-2 transition cursor-pointer hover:brightness-90 disabled:opacity-50"
                 >
-                  {isSubmittingPerfil ? 'Salvando...' : 'Salvar AlteraÃ§Ãµes'}
+                  {isSubmittingPerfil ? 'Salvando...' : 'Salvar Alterações'}
                 </button>
                 <button
                   type="button"
@@ -314,12 +323,13 @@ export default function Perfil() {
             <form onSubmit={handleSubmitSenha(onAlterar)} className="space-y-4">
 
               <div>
-                <label className="block text-sm text-on-surface-variant mb-1">
+                <label className="block text-sm text-on-surface-variant mb-1" htmlFor="perfil-senha-atual">
                   Senha Atual
                 </label>
                 <div className="relative">
                   <input
                     type={mostrarSenhaAtual ? 'text' : 'password'}
+                    id="perfil-senha-atual"
                     {...registerSenha('currentPassword')}
                     className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
                   />
@@ -333,12 +343,13 @@ export default function Perfil() {
               </div>
 
               <div>
-                <label className="block text-sm text-on-surface-variant mb-1">
+                <label className="block text-sm text-on-surface-variant mb-1" htmlFor="perfil-senha-nova">
                   Nova Senha
                 </label>
                 <div className="relative">
                   <input
                     type={mostrarNovaSenha ? 'text' : 'password'}
+                    id="perfil-senha-nova"
                     {...registerSenha('newPassword')}
                     className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
                   />
@@ -352,12 +363,13 @@ export default function Perfil() {
               </div>
 
               <div>
-                <label className="block text-sm text-on-surface-variant mb-1">
+                <label className="block text-sm text-on-surface-variant mb-1" htmlFor="perfil-senha-confirmar">
                   Confirmar Nova Senha
                 </label>
                 <div className="relative">
                   <input
                     type={mostrarConfirmarSenha ? 'text' : 'password'}
+                    id="perfil-senha-confirmar"
                     {...registerSenha('confirmPassword')}
                     className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
                   />
@@ -416,7 +428,10 @@ export default function Perfil() {
                 return (
                   <div
                     key={av.id || i}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => { if (jogo) setJogoSelecionado(jogo); }}
+                    onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && jogo) { e.preventDefault(); setJogoSelecionado(jogo); } }}
                     className="bg-surface-container-high border border-outline-variant rounded-xl p-4 cursor-pointer hover:bg-surface-container-highest transition"
                   >
                     <div className="flex items-center justify-between">

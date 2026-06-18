@@ -41,7 +41,9 @@ export default function useAuth() {
       const storage = lembrar ? localStorage : sessionStorage;
       storage.setItem('token', token);
       const payload = decodificarToken(token);
-      setUsuario({ id: payload.id, nome: payload.nome, perfil: payload.perfil });
+      const usuarioLogado = { id: payload.id, nome: payload.nome, perfil: payload.perfil };
+      setUsuario(usuarioLogado);
+      return usuarioLogado;
     } catch (erroCapturado) {
       const mensagem = erroCapturado.response?.data?.message || 'Erro ao fazer login.';
       setErro(mensagem);

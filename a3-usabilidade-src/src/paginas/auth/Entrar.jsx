@@ -27,8 +27,8 @@ export default function Entrar() {
     }
 
     try {
-      await entrar(email, senha, lembrar);
-      navigate('/loja');
+      const usuarioLogado = await entrar(email, senha, lembrar);
+      navigate(usuarioLogado.perfil === 'Administrador' ? '/admin' : '/loja');
     } catch {
       // erro ja esta no estado do hook
     }

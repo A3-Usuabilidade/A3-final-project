@@ -8,6 +8,8 @@ function obterToken() {
 function limparToken() {
   localStorage.removeItem('token');
   sessionStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
+  sessionStorage.removeItem('refreshToken');
 }
 
 function decodificarToken(token) {
@@ -37,10 +39,19 @@ export default function useAuth() {
     setErro(null);
     try {
       const resposta = await api.post('/auth/login', { email, senha });
-      const { token } = resposta.data;
+      const { token, refreshToken } = resposta.data;
       const storage = lembrar ? localStorage : sessionStorage;
+      const outroStorage = lembrar ? sessionStorage : localStorage;
       storage.setItem('token', token);
-      (lembrar ? sessionStorage : localStorage).removeItem('token');
+      outroStorage.removeItem('token');
+      // O refresh token (quando o backend o envia) é guardado no mesmo
+      // storage do token, respeitando o "lembrar de mim".
+      outroStorage.removeItem('refreshToken');
+      if (refreshToken) {
+        storage.setItem('refreshToken', refreshToken);
+      } else {
+        storage.removeItem('refreshToken');
+      }
       const payload = decodificarToken(token);
       const usuarioLogado = { id: payload.id, nome: payload.nome, perfil: payload.perfil };
       setUsuario(usuarioLogado);

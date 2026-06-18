@@ -96,6 +96,9 @@ export default function LoginMobile({
               Lembre-se de mim
             </label>
 
+            <Link to="/recuperar-senha" className="text-sm font-semibold text-[#2F7FD9] transition hover:opacity-80 dark:text-[#398CEB]">
+              Esqueci minha senha
+            </Link>
           </div>
 
           <button

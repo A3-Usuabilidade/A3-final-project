@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useProfile from '../hooks/useProfile.js';
 import BotaoSair from '../componentes/BotaoSair.jsx';
+import BotaoSenha from '../componentes/ui/Botaosenha.jsx';
 import { esquemaEditarPerfil, esquemaAlterarSenha } from '../configuracao/validacao.js';
 
 export default function Perfil() {
@@ -13,6 +14,9 @@ export default function Perfil() {
   const [sucessoSenhaForm, setSucessoSenhaForm] = useState(null);
   const [editarAtivo, setEditarAtivo] = useState(false);
   const [senhaAtiva, setSenhaAtiva] = useState(false);
+  const [mostrarSenhaAtual, setMostrarSenhaAtual] = useState(false);
+  const [mostrarNovaSenha, setMostrarNovaSenha] = useState(false);
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
 
   const {
     register: registerPerfil,
@@ -269,11 +273,14 @@ export default function Perfil() {
                 <label className="block text-sm text-on-surface-variant mb-1">
                   Senha Atual
                 </label>
-                <input
-                  type="password"
-                  {...registerSenha('currentPassword')}
-                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
-                />
+                <div className="relative">
+                  <input
+                    type={mostrarSenhaAtual ? 'text' : 'password'}
+                    {...registerSenha('currentPassword')}
+                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <BotaoSenha visivel={mostrarSenhaAtual} onClick={() => setMostrarSenhaAtual(!mostrarSenhaAtual)} />
+                </div>
                 {errorsSenha.currentPassword && (
                   <span className="text-error text-xs mt-1 block">
                     {errorsSenha.currentPassword.message}
@@ -285,11 +292,14 @@ export default function Perfil() {
                 <label className="block text-sm text-on-surface-variant mb-1">
                   Nova Senha
                 </label>
-                <input
-                  type="password"
-                  {...registerSenha('newPassword')}
-                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
-                />
+                <div className="relative">
+                  <input
+                    type={mostrarNovaSenha ? 'text' : 'password'}
+                    {...registerSenha('newPassword')}
+                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <BotaoSenha visivel={mostrarNovaSenha} onClick={() => setMostrarNovaSenha(!mostrarNovaSenha)} />
+                </div>
                 {errorsSenha.newPassword && (
                   <span className="text-error text-xs mt-1 block">
                     {errorsSenha.newPassword.message}
@@ -301,11 +311,14 @@ export default function Perfil() {
                 <label className="block text-sm text-on-surface-variant mb-1">
                   Confirmar Nova Senha
                 </label>
-                <input
-                  type="password"
-                  {...registerSenha('confirmPassword')}
-                  className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
-                />
+                <div className="relative">
+                  <input
+                    type={mostrarConfirmarSenha ? 'text' : 'password'}
+                    {...registerSenha('confirmPassword')}
+                    className="w-full bg-surface-container-high border border-outline-variant rounded-lg px-4 py-2 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <BotaoSenha visivel={mostrarConfirmarSenha} onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)} />
+                </div>
                 {errorsSenha.confirmPassword && (
                   <span className="text-error text-xs mt-1 block">
                     {errorsSenha.confirmPassword.message}

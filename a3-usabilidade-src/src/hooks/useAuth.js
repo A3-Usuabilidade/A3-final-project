@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import api from '../servicos/api.js';
 
 function obterToken() {
@@ -19,22 +19,19 @@ function decodificarToken(token) {
 }
 
 export default function useAuth() {
-  const [usuario, setUsuario] = useState(null);
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(null);
-
-  useEffect(() => {
+  const [usuario, setUsuario] = useState(() => {
     const token = obterToken();
-    if (token) {
-      const payload = decodificarToken(token);
-      if (payload && payload.exp * 1000 > Date.now()) {
-        setUsuario({ id: payload.id, nome: payload.nome, perfil: payload.perfil });
-      } else {
-        limparToken();
-      }
+    if (!token) return null;
+
+    const payload = decodificarToken(token);
+    if (payload && payload.exp * 1000 > Date.now()) {
+      return { id: payload.id, nome: payload.nome, perfil: payload.perfil };
     }
-    setCarregando(false);
-  }, []);
+
+    limparToken();
+    return null;
+  });
+  const [erro, setErro] = useState(null);
 
   const entrar = useCallback(async (email, senha, lembrar = false) => {
     setErro(null);
@@ -61,7 +58,7 @@ export default function useAuth() {
     usuario,
     estaAutenticado: !!usuario,
     ehAdmin: usuario?.perfil === 'Administrador',
-    carregando,
+    carregando: false,
     erro,
     entrar,
     sair,

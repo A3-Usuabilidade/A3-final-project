@@ -4,23 +4,24 @@ import useAuth from './useAuth.js';
 
 export default function useProfile() {
   const { usuario } = useAuth();
+  const usuarioId = usuario?.id;
   const [dados, setDados] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    if (!usuario?.id) return;
-    api.get(`/usuarios/${usuario.id}`)
+    if (!usuarioId) return;
+    api.get(`/usuarios/${usuarioId}`)
       .then((res) => setDados(res.data))
       .catch(() => setErro('Erro ao carregar dados do perfil'))
       .finally(() => setCarregando(false));
-  }, [usuario?.id]);
+  }, [usuarioId]);
 
   const atualizar = useCallback(async (dadosAtualizados) => {
-    await api.put(`/usuarios/${usuario.id}`, dadosAtualizados);
-    const { data } = await api.get(`/usuarios/${usuario.id}`);
+    await api.put(`/usuarios/${usuarioId}`, dadosAtualizados);
+    const { data } = await api.get(`/usuarios/${usuarioId}`);
     setDados(data);
-  }, [usuario?.id]);
+  }, [usuarioId]);
 
   const alterarSenha = useCallback(async ({ currentPassword, newPassword }) => {
     await api.put('/auth/change-password', { currentPassword, newPassword });

@@ -146,7 +146,6 @@ export default function Biblioteca() {
         {/* Grid */}
         {!carregando && jogosFiltrados.length > 0 && (
           <motion.div
-            key={busca}
             variants={gridAnimacao}
             initial="hidden"
             animate="show"

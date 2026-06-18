@@ -32,8 +32,8 @@ export default function LayoutAuth() {
 
   if (ehLogin) {
     return (
-      <div className="relative min-h-screen overflow-x-hidden bg-[#05070B] md:flex md:min-h-screen md:flex-col md:items-center md:justify-center md:overflow-hidden md:bg-[linear-gradient(96deg,#f7fbff_0%,#eef5fc_26%,#d6e6f8_44%,#8db5e8_68%,#2f5f99_100%)] md:dark:bg-[linear-gradient(96deg,#000000_0%,#000000_28%,#07101b_33%,#234f88_46%,#d7e5f8_74%,#f4f8fe_100%)]">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(57,140,235,0.28)_0%,rgba(57,140,235,0.10)_24%,rgba(5,7,11,0)_65%)] md:bg-[radial-gradient(circle_at_34%_42%,rgba(57,140,235,0.24)_0%,rgba(57,140,235,0.1)_18%,rgba(0,0,0,0)_42%)] md:dark:bg-[radial-gradient(circle_at_36%_44%,rgba(57,140,235,0.42)_0%,rgba(57,140,235,0.14)_18%,rgba(0,0,0,0)_40%)]" />
+      <div className="relative min-h-screen overflow-x-hidden bg-[linear-gradient(96deg,#f7fbff_0%,#eef5fc_26%,#d6e6f8_44%,#8db5e8_68%,#2f5f99_100%)] dark:bg-[linear-gradient(96deg,#000000_0%,#000000_28%,#07101b_33%,#234f88_46%,#d7e5f8_74%,#f4f8fe_100%)] md:flex md:min-h-screen md:flex-col md:items-center md:justify-center md:overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_34%_42%,rgba(57,140,235,0.24)_0%,rgba(57,140,235,0.10)_18%,rgba(0,0,0,0)_42%)] dark:bg-[radial-gradient(circle_at_36%_44%,rgba(57,140,235,0.42)_0%,rgba(57,140,235,0.14)_18%,rgba(0,0,0,0)_40%)]" />
         <div
           className="pointer-events-none absolute inset-0"
           style={{

@@ -57,7 +57,7 @@ export default function Cadastro() {
   return (
     <div className="min-h-screen px-4 py-5 sm:px-6 sm:py-6 xl:px-8 xl:py-5">
       <div className="mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-[1080px] grid-cols-1 items-center gap-6 xl:grid-cols-[minmax(400px,1fr)_minmax(390px,0.66fr)] xl:gap-6">
-        <section className="flex min-h-full flex-col justify-center text-slate-950 dark:text-white xl:min-h-[32rem] xl:max-w-[26rem] xl:justify-between xl:self-center xl:py-0 xl:justify-self-start">
+        <section className="hidden min-h-full flex-col justify-center text-slate-950 dark:text-white xl:flex xl:min-h-[32rem] xl:max-w-[26rem] xl:justify-between xl:self-center xl:py-0 xl:justify-self-start">
           <div className="flex items-center gap-5 xl:pl-0">
             <Logo className="h-[4.35rem] w-[3rem] text-slate-950 dark:text-white sm:h-[4.9rem] sm:w-[3.4rem]" />
             <h1 className="text-[2.45rem] font-black tracking-[0.02em] text-slate-950 dark:text-white sm:text-[3.85rem]">NEXUS</h1>
@@ -75,6 +75,21 @@ export default function Cadastro() {
         </section>
 
         <section className="mx-auto flex w-full max-w-[28rem] flex-col items-center xl:items-stretch xl:justify-self-end">
+          <div className="mb-6 flex w-full max-w-[24rem] flex-col items-center text-center xl:hidden">
+            <div className="flex items-center justify-center gap-3">
+              <Logo className="h-14 w-[2.8rem] text-slate-950 dark:text-white" />
+              <h1 className="text-[2.6rem] font-black tracking-[0.02em] text-slate-950 dark:text-white">NEXUS</h1>
+            </div>
+
+            <p className="mt-5 max-w-[17rem] text-[1.05rem] font-medium leading-[1.05] text-slate-950 dark:text-white">
+              Sua biblioteca e loja
+              <br />
+              de jogos mais
+              <br />
+              <span className="text-[#398CEB]">{TEXTO_AUTENTICA}</span>
+            </p>
+          </div>
+
           <div className="w-full rounded-[2rem] border border-slate-950/8 bg-[rgba(255,255,255,0.7)] p-4 text-slate-950 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-2xl dark:border-white/10 dark:bg-[rgba(22,26,33,0.9)] dark:text-white dark:shadow-[0_24px_80px_rgba(0,0,0,0.4)] sm:p-5 xl:min-h-[32rem] xl:p-5">
             <div className="mb-5">
               <h2 className="text-[2.1rem] font-black tracking-[-0.03em] sm:text-[2.75rem]">Criar Conta</h2>

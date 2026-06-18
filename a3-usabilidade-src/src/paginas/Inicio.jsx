@@ -101,16 +101,7 @@ export default function Inicio() {
         }
       `}</style>
 
-      <div
-        className="relative min-h-screen flex flex-col overflow-hidden text-white"
-        style={{ background: 'linear-gradient(160deg, #05070b 55%, #0d1f3c 100%)' }}
-      >
-        {/* glow azul superior */}
-        <div
-          className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[420px]"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(57,140,235,.22) 0%, transparent 68%)' }}
-          aria-hidden="true"
-        />
+      <div className="relative min-h-screen flex flex-col overflow-hidden bg-background text-foreground">
 
         {/* ───────────── HEADER ───────────── */}
         <header className="relative z-20 w-full">
@@ -120,13 +111,13 @@ export default function Inicio() {
             <nav className="flex items-center gap-7 mr-auto" aria-label="Navegação principal">
               <Link
                 to="/loja"
-                className="text-sm font-black text-white hover:text-white/70 transition-colors"
+                className="text-sm font-black text-foreground hover:text-foreground/70 transition-colors"
               >
                 Jogos
               </Link>
               <Link
                 to="/loja"
-                className="text-sm font-black text-white hover:text-white/70 transition-colors"
+                className="text-sm font-black text-foreground hover:text-foreground/70 transition-colors"
               >
                 Loja
               </Link>
@@ -138,8 +129,8 @@ export default function Inicio() {
               className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 select-none"
               aria-label="Nexus — página inicial"
             >
-              <Logo className="h-12 w-9 text-white" />
-              <span className="text-3xl font-black tracking-[0.04em] text-white">
+              <Logo className="h-12 w-9 text-foreground" />
+              <span className="text-3xl font-black tracking-[0.04em] text-foreground">
                 NEXUS
               </span>
             </Link>
@@ -148,7 +139,7 @@ export default function Inicio() {
             <div className="ml-auto flex items-center gap-3">
               <Link
                 to="/entrar"
-                className="inline-flex h-10 items-center justify-center rounded-full border border-white/15 bg-white/6 px-5 text-sm font-bold text-white/80 backdrop-blur transition hover:border-[#398CEB]/45 hover:text-white"
+                className="inline-flex h-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/6 px-5 text-sm font-bold text-foreground/80 backdrop-blur transition hover:border-[#398CEB]/50 hover:text-foreground"
               >
                 Entrar
               </Link>
@@ -167,7 +158,7 @@ export default function Inicio() {
 
 
           {/* título */}
-          <h1 className="anim-0 mt-6 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-white sm:text-5xl lg:text-[3.6rem]">
+          <h1 className="anim-0 mt-6 max-w-3xl text-center text-4xl font-black leading-[1.05] tracking-[-0.04em] text-foreground sm:text-5xl lg:text-[3.6rem]">
             Sua loja e biblioteca
             <span className="block text-[#398CEB]">
               em um só lugar.
@@ -175,7 +166,7 @@ export default function Inicio() {
           </h1>
 
           {/* subtítulo */}
-          <p className="anim-2 mt-4 max-w-lg text-center text-base leading-7 text-white/55 sm:text-lg">
+          <p className="anim-2 mt-4 max-w-lg text-center text-base leading-7 text-foreground/55 sm:text-lg">
             Explore jogos, gerencie sua coleção e descubra novos títulos com uma experiência limpa e consistente.
           </p>
 
@@ -189,7 +180,7 @@ export default function Inicio() {
             </Link>
             <Link
               to="/loja"
-              className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-full border border-white/15 bg-white/6 px-7 text-sm font-bold text-white/80 backdrop-blur transition hover:border-[#398CEB]/45 hover:text-white"
+              className="inline-flex h-12 min-w-[200px] items-center justify-center gap-2 rounded-full border border-foreground/15 bg-foreground/6 px-7 text-sm font-bold text-foreground/80 backdrop-blur transition hover:border-[#398CEB]/45 hover:text-foreground"
             >
               Ver jogos
               <ArrowRight size={15} strokeWidth={2.5} aria-hidden="true" />
@@ -242,31 +233,23 @@ export default function Inicio() {
               </div>
             ))}
 
-            {/* sombra de chão */}
-            <div
-              className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-14"
-              style={{
-                background: 'radial-gradient(ellipse at 50% 100%, rgba(57,140,235,.18) 0%, transparent 70%)',
-                filter: 'blur(10px)',
-              }}
-              aria-hidden="true"
-            />
+
           </div>
         </main>
 
         {/* ───────────── FOOTER ───────────── */}
-        <footer className="relative z-20 border-t border-white/8 bg-black/20 backdrop-blur-sm">
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-8 py-5 text-sm text-white/40 sm:px-12 md:flex-row md:items-center md:justify-between">
+        <footer className="relative z-20 border-t border-foreground/10 bg-foreground/4">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-8 py-5 text-sm text-foreground/40 sm:px-12 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2">
-              <Logo className="h-6 w-5 text-white/50" />
-              <span className="font-bold text-white/55">NEXUS</span>
+              <Logo className="h-6 w-5 text-foreground/50" />
+              <span className="font-bold text-foreground/55">NEXUS</span>
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-1">
-              <Link to="/entrar" className="hover:text-white transition-colors">Entrar</Link>
-              <Link to="/cadastro" className="hover:text-white transition-colors">Criar conta</Link>
-              <Link to="/loja" className="hover:text-white transition-colors">Loja</Link>
+              <Link to="/entrar" className="hover:text-foreground transition-colors">Entrar</Link>
+              <Link to="/cadastro" className="hover:text-foreground transition-colors">Criar conta</Link>
+              <Link to="/loja" className="hover:text-foreground transition-colors">Loja</Link>
             </div>
-            <p className="text-xs font-medium uppercase tracking-[.12em] text-white/25">
+            <p className="text-xs font-medium uppercase tracking-[.12em] text-foreground/25">
               © 2026 Nexus Digital Store
             </p>
           </div>

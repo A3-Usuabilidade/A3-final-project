@@ -315,8 +315,8 @@ function NavbarLoja({ busca, setBusca, quantidadeCarrinho, menuMobileAberto, set
     <header className="mx-auto w-full max-w-7xl pt-6 sm:pt-8">
       <div className="flex items-center gap-2 sm:hidden">
         <Link
-          to="/loja"
-          aria-label="Ir para a loja Nexus"
+          to="/"
+          aria-label="Voltar para a página inicial"
           className={`flex h-11 shrink-0 items-center justify-center gap-2 rounded-full pl-4 pr-4 outline-none ring-1 transition hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-[#398ceb] ${barraClasse}`}
         >
           <span className="grid h-6 w-[17px] place-items-center">
@@ -401,8 +401,8 @@ function NavbarLoja({ busca, setBusca, quantidadeCarrinho, menuMobileAberto, set
       <div className="hidden sm:block">
         <div className="flex items-start justify-between gap-6">
           <Link
-            to="/loja"
-            aria-label="Ir para a loja Nexus"
+            to="/"
+            aria-label="Voltar para a página inicial"
             className="inline-flex items-center gap-2.5 rounded-full px-1 py-1 outline-none transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#398ceb]"
           >
             <span className="grid h-8 w-[22px] place-items-center">

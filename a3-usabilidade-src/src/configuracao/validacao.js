@@ -158,3 +158,37 @@ export const esquemaJogo = z.object({
 export const esquemaEmpresa = z.object({
   nome: z.string().trim().min(1, 'Nome da empresa é obrigatório'),
 });
+
+// ===========================================
+// Pagamento (simulação no checkout)
+// ===========================================
+
+function validadeNaoExpirada(val) {
+  const [mes, ano] = val.split('/').map(Number);
+  if (!mes || mes < 1 || mes > 12) return false;
+  // Cartão é válido até o último dia do mês informado.
+  const ultimoInstante = new Date(2000 + ano, mes, 0, 23, 59, 59);
+  return ultimoInstante >= new Date();
+}
+
+export const esquemaPagamento = z.object({
+  numeroCartao: z
+    .string()
+    .transform((v) => v.replace(/\s/g, ''))
+    .refine((v) => /^\d{16}$/.test(v), 'Número do cartão deve ter 16 dígitos'),
+
+  nomeCartao: z
+    .string()
+    .trim()
+    .min(3, 'Informe o nome impresso no cartão')
+    .regex(regexNome, 'Nome deve conter apenas letras e espaços'),
+
+  validade: z
+    .string()
+    .regex(/^\d{2}\/\d{2}$/, 'Validade deve estar no formato MM/AA')
+    .refine(validadeNaoExpirada, 'Validade inválida ou cartão expirado'),
+
+  cvv: z
+    .string()
+    .regex(/^\d{3,4}$/, 'CVV deve ter 3 ou 4 dígitos'),
+});

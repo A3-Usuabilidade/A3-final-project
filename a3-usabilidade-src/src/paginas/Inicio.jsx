@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import ThemeToggle from '../componentes/ThemeToggle.jsx';
 
 export default function Inicio() {
   return (
@@ -9,7 +8,6 @@ export default function Inicio() {
         <Link to="/entrar" className="text-on-surface">Login</Link>
         <Link to="/cadastro" className="text-on-surface">Cadastrar</Link>
       </nav>
-      <ThemeToggle />
     </>
   );
 }

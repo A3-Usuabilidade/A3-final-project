@@ -8,6 +8,7 @@ import LayoutApp from './layouts/LayoutApp.jsx';
 import RotaProtegida from './componentes/RotaProtegida.jsx';
 import RotaPublica from './componentes/RotaPublica.jsx';
 import ThemeToggleGlobal from './componentes/ThemeToggleGlobal.jsx';
+import ProvedorToast from './componentes/ProvedorToast.jsx';
 import Cadastro from './paginas/auth/Cadastro.jsx';
 import Entrar from './paginas/auth/Entrar.jsx';
 import Inicio from './paginas/Inicio.jsx';
@@ -27,7 +28,7 @@ if (typeof window !== 'undefined') {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <>
+      <ProvedorToast>
         <Routes>
           <Route path="/" element={<Inicio />} />
 
@@ -59,7 +60,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <ThemeToggleGlobal />
-      </>
+      </ProvedorToast>
     </BrowserRouter>
   </StrictMode>,
 );

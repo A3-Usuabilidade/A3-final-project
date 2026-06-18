@@ -49,16 +49,18 @@ export default function useCarrinho() {
 
   const adicionar = useCallback(
     async (jogoId) => {
-      if (!estaAutenticado || !jogoId) return;
+      if (!estaAutenticado || !jogoId) return false;
       setErro(null);
       try {
         const resposta = await api.post('/carrinho/add', { jogoId });
         setItens(normalizarItensCarrinho(resposta.data));
+        return true;
       } catch (erroCapturado) {
         setErro(
           erroCapturado.response?.data?.message ||
             'Não foi possível adicionar o jogo ao carrinho.',
         );
+        return false;
       }
     },
     [estaAutenticado],

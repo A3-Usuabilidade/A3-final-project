@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../componentes/Logo.jsx';
 import BotaoSenha from '../../componentes/ui/Botaosenha.jsx';
@@ -23,9 +23,28 @@ export default function Cadastro() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [erroForm, setErroForm] = useState(null);
+  const diaNascimentoRef = useRef(null);
+  const mesNascimentoRef = useRef(null);
+  const anoNascimentoRef = useRef(null);
   const navigate = useNavigate();
 
   const dataNascimento = [diaNascimento, mesNascimento, anoNascimento].join('/');
+
+  const handleDatePartChange = (valor, setValor, limite, proximoRef) => {
+    const valorLimpo = valor.replace(/\D/g, '').slice(0, limite);
+    setValor(valorLimpo);
+
+    if (valorLimpo.length === limite && proximoRef?.current) {
+      proximoRef.current.focus();
+      proximoRef.current.select?.();
+    }
+  };
+
+  const handleDatePartKeyDown = (event, valorAtual, refAnterior) => {
+    if (event.key === 'Backspace' && !valorAtual && refAnterior?.current) {
+      refAnterior.current.focus();
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +76,7 @@ export default function Cadastro() {
   return (
     <div className="min-h-screen px-4 py-5 sm:px-6 sm:py-6 xl:px-8 xl:py-5">
       <div className="mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-[1080px] grid-cols-1 items-center gap-6 xl:grid-cols-[minmax(400px,1fr)_minmax(390px,0.66fr)] xl:gap-6">
-        <section className="flex min-h-full flex-col justify-center text-slate-950 dark:text-white xl:min-h-[32rem] xl:max-w-[26rem] xl:justify-between xl:self-center xl:py-0 xl:justify-self-start">
+        <section className="hidden min-h-full flex-col justify-center text-slate-950 dark:text-white xl:flex xl:min-h-[32rem] xl:max-w-[26rem] xl:justify-between xl:self-center xl:py-0 xl:justify-self-start">
           <div className="flex items-center gap-5 xl:pl-0">
             <Logo className="h-[4.35rem] w-[3rem] text-slate-950 dark:text-white sm:h-[4.9rem] sm:w-[3.4rem]" />
             <h1 className="text-[2.45rem] font-black tracking-[0.02em] text-slate-950 dark:text-white sm:text-[3.85rem]">NEXUS</h1>
@@ -75,6 +94,21 @@ export default function Cadastro() {
         </section>
 
         <section className="mx-auto flex w-full max-w-[28rem] flex-col items-center xl:items-stretch xl:justify-self-end">
+          <div className="mb-6 flex w-full max-w-[24rem] flex-col items-center text-center xl:hidden">
+            <div className="flex items-center justify-center gap-3">
+              <Logo className="h-14 w-[2.8rem] text-slate-950 dark:text-white" />
+              <h1 className="text-[2.6rem] font-black tracking-[0.02em] text-slate-950 dark:text-white">NEXUS</h1>
+            </div>
+
+            <p className="mt-5 max-w-[17rem] text-[1.05rem] font-medium leading-[1.05] text-slate-950 dark:text-white">
+              Sua biblioteca e loja
+              <br />
+              de jogos mais
+              <br />
+              <span className="text-[#398CEB]">{TEXTO_AUTENTICA}</span>
+            </p>
+          </div>
+
           <div className="w-full rounded-[2rem] border border-slate-950/8 bg-[rgba(255,255,255,0.7)] p-4 text-slate-950 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-2xl dark:border-white/10 dark:bg-[rgba(22,26,33,0.9)] dark:text-white dark:shadow-[0_24px_80px_rgba(0,0,0,0.4)] sm:p-5 xl:min-h-[32rem] xl:p-5">
             <div className="mb-5">
               <h2 className="text-[2.1rem] font-black tracking-[-0.03em] sm:text-[2.75rem]">Criar Conta</h2>
@@ -99,7 +133,7 @@ export default function Cadastro() {
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   required
-                  className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                  className="auth-input h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                   placeholder={TEXTO_EXEMPLO_NOME}
                 />
               </div>
@@ -111,7 +145,7 @@ export default function Cadastro() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                  className="auth-input h-12 w-full rounded-[1rem] px-4 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                   placeholder="exemplo@nexus.com"
                 />
               </div>
@@ -120,32 +154,37 @@ export default function Cadastro() {
                 <label className="mb-1.5 block text-[0.92rem] font-bold text-slate-800 dark:text-white/88">{'Data de Nascimento'}</label>
                 <div className="flex h-12 items-center rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 text-center focus-within:border-[#398CEB] dark:border-transparent dark:bg-[#1d1a1a]">
                   <input
+                    ref={diaNascimentoRef}
                     type="text"
                     inputMode="numeric"
                     maxLength={2}
                     value={diaNascimento}
-                    onChange={(e) => setDiaNascimento(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    onChange={(e) => handleDatePartChange(e.target.value, setDiaNascimento, 2, mesNascimentoRef)}
+                    className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Dia"
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
                   <input
+                    ref={mesNascimentoRef}
                     type="text"
                     inputMode="numeric"
                     maxLength={2}
                     value={mesNascimento}
-                    onChange={(e) => setMesNascimento(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    onChange={(e) => handleDatePartChange(e.target.value, setMesNascimento, 2, anoNascimentoRef)}
+                    onKeyDown={(e) => handleDatePartKeyDown(e, mesNascimento, diaNascimentoRef)}
+                    className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder={TEXTO_MES}
                   />
                   <span className="px-2 text-xl text-slate-500 dark:text-white/72">/</span>
                   <input
+                    ref={anoNascimentoRef}
                     type="text"
                     inputMode="numeric"
                     maxLength={4}
                     value={anoNascimento}
-                    onChange={(e) => setAnoNascimento(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                    className="h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
+                    onChange={(e) => handleDatePartChange(e.target.value, setAnoNascimento, 4)}
+                    onKeyDown={(e) => handleDatePartKeyDown(e, anoNascimento, mesNascimentoRef)}
+                    className="auth-input h-full w-full bg-transparent text-center text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none dark:text-white dark:placeholder:text-white/62"
                     placeholder="Ano"
                   />
                 </div>
@@ -160,7 +199,7 @@ export default function Cadastro() {
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
                       required
-                      className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                      className="auth-input h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                       placeholder={PLACEHOLDER_SENHA}
                     />
                     <BotaoSenha
@@ -179,7 +218,7 @@ export default function Cadastro() {
                       value={confirmarSenha}
                       onChange={(e) => setConfirmarSenha(e.target.value)}
                       required
-                      className="h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
+                      className="auth-input h-12 w-full rounded-[1rem] border border-slate-300/70 bg-white/88 px-4 pr-12 text-[0.98rem] font-semibold text-slate-900 placeholder:text-slate-500 focus:border-[#398CEB] focus:outline-none dark:border-transparent dark:bg-[#1d1a1a] dark:text-white dark:placeholder:text-white/48"
                       placeholder={PLACEHOLDER_SENHA}
                     />
                     <BotaoSenha

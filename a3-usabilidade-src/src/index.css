@@ -237,3 +237,24 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
+
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-text-fill-color: #0f172a;
+  caret-color: #0f172a;
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.88) inset;
+  -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.88) inset;
+  transition: background-color 9999s ease-out 0s;
+}
+
+.dark .auth-input:-webkit-autofill,
+.dark .auth-input:-webkit-autofill:hover,
+.dark .auth-input:-webkit-autofill:focus,
+.dark .auth-input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  box-shadow: 0 0 0 1000px #1d1a1a inset;
+  -webkit-box-shadow: 0 0 0 1000px #1d1a1a inset;
+}

@@ -9,7 +9,7 @@ export default function ThemeToggleGlobal() {
   }
 
   if (pathname === '/entrar') {
-    return <ThemeToggle variant="auth" position="floating" />;
+    return <ThemeToggle variant="auth" position="authTopRight" />;
   }
 
   return <ThemeToggle variant="surface" position="floating" />;

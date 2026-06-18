@@ -4,8 +4,9 @@ export default function BotaoSenha({ visivel, onClick, className = '' }) {
   return (
     <button
       type="button"
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
-      aria-label={visivel ? 'Ocultar senha' : 'Mostrar senha'}
+      aria-label={visivel ? 'Ocultar senha' : 'Exibir senha'}
       className={`absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer ${className || 'text-on-surface-variant hover:text-on-surface'}`}
     >
       {visivel ? <EyeOff size={20} /> : <Eye size={20} />}
